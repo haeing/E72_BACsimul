@@ -1,0 +1,32 @@
+#ifndef BACDetectorConstruction_hh
+#define BACDetectorConstruction_hh
+
+#include "G4VUserDetectorConstruction.hh"
+#include "globals.hh"
+
+
+class G4VPhysicalVolume;
+class G4LogicalVolume;
+class G4VSensitiveDetector;
+class G4VisBACributes;
+
+class BACDetectorConstruction : public G4VUserDetectorConstruction
+{
+public:
+  BACDetectorConstruction();
+  virtual ~BACDetectorConstruction();
+
+  virtual void ConstructSDandField();
+
+  virtual G4VPhysicalVolume* Construct();
+
+private:
+  G4LogicalVolume* AeroLW;
+  G4LogicalVolume* BlackLW;
+
+  std::vector<G4VisAttributes*> fVisAttributes;
+
+  
+};
+
+#endif

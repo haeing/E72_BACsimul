@@ -1,0 +1,54 @@
+#ifndef BACEVENTACTION_HH
+#define BACEventAction_hh 1
+
+#include "G4UserEventAction.hh"
+#include "G4Event.hh"
+#include "globals.hh"
+#include "TTree.h"
+#include "TFile.h"
+
+#include <vector>
+#include <array>
+
+#include "BACPrimaryGeneratorAction.hh"
+
+
+//const G4int kDim = 3;
+
+class BACEventAction : public G4UserEventAction
+{
+public:
+  BACEventAction();
+  virtual ~BACEventAction();
+
+  virtual void BeginOfEventAction(const G4Event *);
+  virtual void EndOfEventAction(const G4Event *);
+
+
+
+
+private:
+  void DefineTree();
+
+  G4int eventID;
+  G4int particleID;
+  G4double init_energy;
+  G4double numPho;
+  G4double edep;
+  G4double time;
+  G4double xPrm, yPrm, zPrm;
+  G4int fPMTHCID;
+  G4int fScinHCID;
+  //G4double zenith;
+  G4double y_surface;
+  TTree* tree;
+
+  
+
+  
+};
+
+#endif
+
+ 
+  

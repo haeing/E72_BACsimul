@@ -1,0 +1,186 @@
+#include "BACDetectorConstruction.hh"
+#include "AeroSD.hh"
+
+#include "G4Colour.hh"
+#include "G4NistManager.hh"
+#include "G4Box.hh"
+#include "G4LogicalVolume.hh"
+#include "G4PVPlacement.hh"
+#include "G4SystemOfUnits.hh"
+#include "G4Element.hh"
+#include "G4Material.hh"
+#include "G4UnionSolid.hh"
+#include "G4SubtractionSolid.hh"
+#include "G4Trap.hh"
+#include "G4SDManager.hh"
+#include "G4VSensitiveDetector.hh"
+#include "G4RunManager.hh"
+#include "G4VPhysicalVolume.hh"
+#include "G4VisAttributes.hh"
+#include "G4ios.hh"
+#include "TString.h"
+#include "G4Tubs.hh"
+#include "G4OpticalSurface.hh"
+#include "G4LogicalSkinSurface.hh"
+#include "G4RotationMatrix.hh"
+
+BACDetectorConstruction::BACDetectorConstruction()
+  : G4VUserDetectorConstruction()
+{
+}
+
+BACDetectorConstruction::~BACDetectorConstruction()
+{
+  for (auto visAttributes: fVisAttributes){
+  delete visAttributes;
+  }
+}
+
+
+G4VPhysicalVolume* BACDetectorConstruction::Construct()
+{
+  G4NistManager* nist = G4NistManager::Instance();
+  G4bool checkOverlaps = true;
+
+
+  //Material---------------------------------------------------------------
+
+  G4Material* world_mat = nist-> FindOrBuildMaterial("G4_AIR");
+
+  G4Element* C = new G4Element("Carbon","C",6.,12.011*g/mole);
+  G4Element* H = new G4Element("Hydrogen","H",1.,1.00794*g/mole);
+  G4Element* O = new G4Element("Oxygen","O",15.,15.9994*g/mole);
+  G4Element* Al = new G4Element("Aluminum","Al",13.,26.981538*g/mole);
+  G4Element* B = new G4Element("Boron","B",5.,10.811*g/mole);
+  G4Element* Na = new G4Element("Na","Na",11.,23.0*g/mole);
+  G4Element* Si = new G4Element("Silicon","Si",14.,28.0844*g/mole);
+  G4Element* K = new G4Element("Potassium","K",19.,39.093*g/mole);
+
+
+  G4Material *Aerogel = new G4Material("Aerogel",0.2000*g/cm3,2);
+  Aerogel->AddElement(Si,1);
+  Aerogel->AddElement(O,2);
+
+  G4Material* blacksheet = new G4Material("blacksheet",0.95*g/cm3,2);
+  blacksheet->AddElement(C,1);
+  blacksheet->AddElement(H,2);
+
+
+
+  //Property--------------------------------------------------------------
+
+
+  //Aerogel Property------------------------------------------------------
+  G4MaterialPropertiesTable* prop_aerogel = new G4MaterialPropertiesTable();
+
+  /*
+  prop_aerogel->AddProperty("RINDEX",air_ep,scin_rindex,2)->SetSpline(true);
+  prop_aerogel->AddProperty("ABSLENGTH",scin_ep,scin_abs,numentries_scin)->SetSpline(true);
+  prop_aerogel->AddProperty("FASTCOMPONENT",scin_ep1,scin_fast,numentries_scin1)->SetSpline(true);
+  prop_aerogel->AddProperty("SLOWCOMPONENT",scin_ep1,scin_fast,numentries_scin1)->SetSpline(true);
+  //prop_aerogel->AddConstProperty("SCINTILLATIONYIELD",10000./MeV);
+  */
+  prop_aerogel->AddConstProperty("RESOLUTIONSCALE",1.0);
+  prop_aerogel->AddConstProperty("FASTTIMECONSTANT", 1.*ns);
+  prop_aerogel->AddConstProperty("SLOWTIMECONSTANT",2.8*ns);
+  prop_aerogel->AddConstProperty("YIELDRATIO",0.8);
+  //Aerogel->SetMaterialPropertiesTable(prop_aerogel);
+
+
+  //Black sheet property-------------------------------------------------
+  G4MaterialPropertiesTable* prop_bs = new G4MaterialPropertiesTable();
+
+  G4double bs_ep[] = {1.6*eV,7.*eV};
+  G4double bs_abs[] = {1.0e-9*cm,1.0e-9*cm};
+  G4double bs_rindex[]={1.6,1.6};
+  
+  prop_bs->AddProperty("RINDEX",bs_ep,bs_rindex,2)->SetSpline(true);
+  prop_bs->AddProperty("ABSLENGTH",bs_ep,bs_abs,2)->SetSpline(true);
+  //blacksheet->SetMaterialPropertiesTable(prop_bs);
+  
+  //Geometry---------------------------------------------------------------
+
+  //World------------------------------------------------------------------
+  G4double world_size = 1*m;
+  G4Box* solidWorld = new G4Box("World",world_size, world_size, world_size); 
+  G4LogicalVolume* logicWorld = new G4LogicalVolume(solidWorld, world_mat, "World");
+  G4VPhysicalVolume* physWorld = new G4PVPlacement(0,G4ThreeVector(), logicWorld, "World",0,false,0,checkOverlaps);
+
+  //Aerogel---------------------------------------------------------------
+  G4double Aerox = 100.0/2 *mm;
+  G4double Aeroy = 100.0/2 *mm;
+  G4double Aeroz = 20.0/2 *mm;
+
+  G4Box* AeroSL = new G4Box("Aero",Aerox,Aeroy,Aeroz);
+  AeroLW = new G4LogicalVolume(AeroSL,Aerogel,"Aero");
+  new G4PVPlacement(0,G4ThreeVector(), AeroLW, "Aero",logicWorld,false,0,checkOverlaps);
+
+  //Black sheet----------------------------------------------------------
+  G4double Black_thick = 0.5 *mm;
+
+  G4Box* Black_hole = new G4Box("black_hole",Aerox,Aeroy,Aeroz+1*cm);
+  G4Box* Black_cover = new G4Box("black_cover",Aerox+Black_thick,Aeroy+Black_thick,Aeroz+Black_thick);
+
+  G4SubtractionSolid* BlackSL = new G4SubtractionSolid("Black",Black_cover,Black_hole,0,G4ThreeVector());
+  BlackLW = new G4LogicalVolume(BlackSL,blacksheet,"Black");
+  new G4PVPlacement(0,G4ThreeVector(), BlackLW, "Black", logicWorld,false,0,checkOverlaps);
+
+  
+  auto visAttributes = new G4VisAttributes(G4Colour(1.0, 1.0, 1.0));
+  visAttributes -> SetVisibility(false);
+  logicWorld->SetVisAttributes(visAttributes);
+  fVisAttributes.push_back(visAttributes);
+  
+  visAttributes = new G4VisAttributes(G4Colour(0.9,0,0.9));   // LightGray
+  AeroLW->SetVisAttributes(visAttributes);
+  fVisAttributes.push_back(visAttributes);
+
+  visAttributes = new G4VisAttributes(G4Colour(0.5,0.5,0.0));
+  BlackLW->SetVisAttributes(visAttributes);
+  fVisAttributes.push_back(visAttributes);
+
+
+
+  //Surface--------------------------------------------------------------
+  //black sheet surface------------------
+  /*
+  G4OpticalSurface* surface_bs = new G4OpticalSurface("surface_bs");
+  surface_bs->SetType(dielectric_dielectric);
+  surface_bs->SetModel(unified);
+  surface_bs->SetFinish(polishedtyvekair);
+
+  G4MaterialPropertiesTable* sp_bs = new G4MaterialPropertiesTable();
+
+  G4double bs_effi[] = {0.0,0.0};
+  G4double bs_reflec[]= {0.05,0.05};
+  G4double bs_specularLobe[] = {0.3,0.3};
+  G4double bs_specularSpike[] = {0.2,0.2};
+  G4double bs_backScatter[] = {0,0};
+
+  sp_bs->AddProperty("EFFICIENCY",bs_ep,bs_effi,2)->SetSpline(true);
+  sp_bs->AddProperty("REFLECTIVITY",bs_ep,bs_reflec,2)->SetSpline(true);
+  sp_bs->AddProperty("SPECULARLOBECONSTANT",bs_ep,bs_specularLobe,2)->SetSpline(true);
+  sp_bs->AddProperty("SPECULARSPIKECONSTANT",bs_ep,bs_specularSpike,2)->SetSpline(true);
+  sp_bs->AddProperty("BACKSCATTERCONSTANT",bs_ep,bs_backScatter,2)->SetSpline(true);
+  surface_bs->SetMaterialPropertiesTable(sp_bs);
+
+  new G4LogicalSkinSurface("bs_surface",BlackLW,surface_bs);
+  */
+
+
+  return physWorld;
+}
+
+
+void BACDetectorConstruction::ConstructSDandField()
+{
+  auto aeroSD = new AeroSD("aeroSD");
+  G4SDManager::GetSDMpointer()->AddNewDetector(aeroSD);
+  AeroLW->SetSensitiveDetector(aeroSD);
+
+}
+
+
+
+  
+  

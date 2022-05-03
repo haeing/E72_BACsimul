@@ -1,0 +1,169 @@
+#include "BACEventAction.hh"
+#include "AeroHit.hh"
+
+#include "G4Event.hh"
+#include "G4VVisManager.hh"
+#include "G4UnitsTable.hh"
+#include "G4SDManager.hh"
+#include "g4analysis.hh"
+#include "G4RunManager.hh"
+#include "G4EventManager.hh"
+#include "G4HCofThisEvent.hh"
+#include "G4VHitsCollection.hh"
+#include "G4SystemOfUnits.hh"
+#include "G4ios.hh"
+#include "G4Step.hh"
+#include "G4PrimaryParticle.hh"
+#include <TMath.h>
+
+#include "BACPrimaryGeneratorAction.hh"
+
+
+
+namespace{
+G4VHitsCollection* GetHC(const G4Event* event, G4int collId){
+  auto hce = event->GetHCofThisEvent();
+  if(!hce){
+    G4ExceptionDescription msg;
+    msg << "No hits collection of this event found." << G4endl;
+    G4Exception("BACEventAction::EndOfEventAction()","BACCode001",JustWarning,msg);
+    return nullptr;
+    }
+
+  auto hc = hce->GetHC(collId);
+  if(! hc){
+    G4ExceptionDescription msg;
+    msg << "Hits collection" << collId << " of this event not found" <<G4endl;
+    G4Exception("BACEventAction::EndOfEventAction()","BACCode001",JustWarning, msg);
+    }
+  return hc;
+}
+}
+
+BACEventAction::BACEventAction()
+  : G4UserEventAction(),fAeroHCID(-1)
+{
+}
+
+BACEventAction::~BACEventAction()
+{}
+
+void BACEventAction::BeginOfEventAction(const G4Event* evt)
+{
+  std::cout<<"event1"<<std::endl;
+
+  G4int event_id = evt -> GetEventID();
+std::cout<<"event2"<<std::endl;
+
+  if (event_id == 0)
+    DefineTree();
+  std::cout<<"event3"<<std::endl;
+
+  if (fAeroHCID == -1){
+    auto sdManager = G4SDManager::GetSDMpointer();
+    std::cout<<"event4"<<std::endl;
+
+    G4String aeroHCName = "aeroSD/aeroColl";
+    std::cout<<"event5"<<std::endl;
+
+    fAeroHCID = sdManager->GetCollectionID(aeroHCName);
+    std::cout<<"event6"<<std::endl;
+
+
+  }
+ 
+}
+
+
+  
+void BACEventAction::EndOfEventAction(const G4Event* evt/*, const G4Step* step*/)
+{
+
+  G4HCofThisEvent *HCE = evt -> GetHCofThisEvent();
+  std::cout<<"event7"<<std::endl;
+  //if(!HCE)return;
+  /*
+  for(int i=0;i<HCE->GetCapacity();i++){
+    if(HCE->GetHC(i) ->GetSize()==0) continue;
+    auto hit = (PMTHit*)(HCE->GetHC(i)->GetHit(0));
+    edep[i] = hit -> GetEdep();
+    time[i] = hit -> GetTime();
+    
+  }
+  */
+
+  auto hc = GetHC(evt,fAeroHCID);
+  std::cout<<"event8"<<std::endl;
+
+  //if (!hc) return;
+  //auto nhit = hc->GetSize();
+  //auto analysisManager = G4AnalysisManager::Instance();
+  
+  //G4double phit = 0.0;
+
+  //G4double t;
+
+  
+  //for(unsigned int i=0;i<hc->GetSize();++i){
+
+
+  for (int i=0;i<HCE->GetCapacity();i++){
+    auto hit = (AeroHit*)(HCE->GetHC(i)->GetHit(0));
+    //phit += hit->GetPhotonCount();
+    //t = hit->GetTime();
+
+  }
+  std::cout<<"event9"<<std::endl;
+
+  //Change->ShowInfoEvent();
+  
+
+  
+  G4int event_id = evt->GetEventID();
+  std::cout<<"event10"<<std::endl;
+
+
+  G4ThreeVector position = evt->GetPrimaryVertex(0)->GetPosition();
+  G4int pdg = evt->GetPrimaryVertex(0)->GetPrimary(0)->GetPDGcode();
+  xPrm = position.x();
+  yPrm = position.y();
+  zPrm = position.z();
+
+
+  //zenith = TMath::ACos(zPrm/5000);
+
+
+  auto primary = evt->GetPrimaryVertex(0)->GetPrimary(0);
+  double energy = primary->GetTotalEnergy();
+
+  //numPho = phit;
+
+
+  eventID = event_id;
+  particleID = pdg;
+  init_energy = energy;
+  //time = t;
+  tree->Fill();
+std::cout<<"event11"<<std::endl;
+  
+
+}
+
+void BACEventAction::DefineTree(){
+  tree = dynamic_cast<TTree*>(gFile->Get("tree"));
+  std::cout<<"eventdefine1"<<std::endl;
+  tree->Branch("eventID",&eventID,"eventID/I");
+  tree->Branch("particleID",&particleID,"particleID/I");
+  tree->Branch("init_energy",&init_energy,"init_energy/D");
+  //tree->Branch("numPho",&numPho,"numPho/D");
+  //tree->Branch("edep",&edep,"edep/D");
+  //tree->Branch("time",&time,"time/D");
+  tree->Branch("xPrm",&xPrm,"xPrm/D");
+  tree->Branch("yPrm",&yPrm,"yPrm/D");
+  tree->Branch("zPrm",&zPrm,"zPrm/D");
+  //tree->Branch("zenith",&zenith,"zenith/D");
+  std::cout<<"eventdefine2"<<std::endl;
+	       
+}
+
+

@@ -1,0 +1,72 @@
+#ifndef ScinHit_hh
+#define ScinHit_hh 1
+
+#include "G4VHit.hh"
+#include "G4THitsCollection.hh"
+#include "G4ThreeVector.hh"
+#include "G4Allocator.hh"
+#include "G4LogicalVolume.hh"
+
+class G4AttDef;
+class G4AttValue;
+
+class ScinHit : public G4VHit
+{
+public:
+  ScinHit();
+  ScinHit(G4int i, G4double t);
+  ScinHit(const ScinHit &right);
+  virtual ~ScinHit();
+
+  const ScinHit& operator=(const ScinHit &right);
+  G4bool operator==(const ScinHit &right) const;
+
+  inline void *operator new(size_t);
+  inline void operator delete(void *aHit);
+
+  virtual const std::map<G4String,G4AttDef>* GetAttDefs() const;
+  virtual std::vector<G4AttValue>* CreateAttValues() const;
+
+  void SetEdep(G4double de) {fEdep = de;}
+  void AddEdep(G4double de) {fEdep += de;}
+  G4double GetEdep() const {return fEdep;}
+
+  G4int GetID() const {return fId;}
+
+  void SetTime(G4double dt) {fTime = dt;}
+  G4double GetTime() const {return fTime;}
+
+  //void IncPhotonCount() {fPhotons++;}
+  //G4double GetPhotonCount() {return fPhotons;}
+  //void ClearPhotonCount() {fPhotons=0.0;}
+
+  //void SetPos(G4ThreeVector xyz) {fPos = xyz;}
+  //G4ThreeVector GetPos() const {return fPos;}
+  
+private:
+  G4int fId;
+  G4double fEdep;
+  G4double fTime;
+  //G4double fPhotons;
+  G4ThreeVector fPos;
+};
+
+using ScinHitsCollection = G4THitsCollection<ScinHit>;
+
+extern G4ThreadLocal G4Allocator<ScinHit>* ScinHitAllocator;
+
+inline void* ScinHit::operator new(size_t)
+{
+  if (!ScinHitAllocator){
+    ScinHitAllocator = new G4Allocator<ScinHit>;
+  }
+  return (void*)ScinHitAllocator-> MallocSingle();
+}
+
+inline void ScinHit::operator delete(void* aHit)
+{
+  ScinHitAllocator->FreeSingle((ScinHit*) aHit);
+}
+
+#endif
+  
