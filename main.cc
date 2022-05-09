@@ -20,7 +20,7 @@
 #include "G4EmStandardPhysics_option4.hh"
 #include "G4DeexPrecoParameters.hh"
 #include "G4NuclearLevelData.hh"
-#include "G4RunManagerFactory.hh"
+//#include "G4RunManagerFactory.hh"
 
 #include "G4VisExecutive.hh"
 #include "G4ScoringManager.hh"

@@ -23,6 +23,10 @@ public:
 private:
   G4LogicalVolume* AeroLW;
   G4LogicalVolume* BlackLW;
+  G4LogicalVolume* trdworldLW;
+  G4LogicalVolume* TrdLW;
+  G4LogicalVolume* UpReflLW;
+  G4LogicalVolume* DownReflLW;
 
   std::vector<G4VisAttributes*> fVisAttributes;
 

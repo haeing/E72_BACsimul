@@ -85,20 +85,21 @@ void BACPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   G4ThreeVector D(0*mm,0*mm,-100*mm);
   G4ThreeVector P(0,0,1);
   std::cout<<"gene3"<<std::endl;
-  GenerateBeamKaonMBr(anEvent,D,P);
+  //GenerateBeamKaonMBr(anEvent,D,P);
   std::cout<<"gene4"<<std::endl;
 
 
   //test------------------------------------
-  /*
+  
   fParticleGun -> SetParticleDefinition (particleTable -> FindParticle("kaon-"));
+  //fParticleGun -> SetParticleDefinition (particleTable -> FindParticle("pi-"));
   fParticleGun->SetParticleMomentumDirection ( G4ThreeVector(0,0,1) );
 
   //fParticleGun->SetParticleTime ( 0.0 );
-  fParticleGun->SetParticlePosition( G4ThreeVector(0,0,1) );
-  fParticleGun->SetParticleEnergy( 0.735*GeV );
+  fParticleGun->SetParticlePosition( G4ThreeVector(0,0,-10*cm) );
+  fParticleGun->SetParticleEnergy( 0.7*GeV );
   fParticleGun->GeneratePrimaryVertex( anEvent);
-  */
+
 
 }
 
