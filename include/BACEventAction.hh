@@ -30,6 +30,7 @@ public:
 private:
   void DefineTree();
 
+  //G4double phit;
   G4int eventID;
   G4int particleID;
   G4double init_energy;
@@ -38,6 +39,7 @@ private:
   G4double time;
   G4double xPrm, yPrm, zPrm;
   G4int fAeroHCID;
+  G4int fMPPCHCID;
   //G4double zenith;
   G4double y_surface;
   TTree* tree;

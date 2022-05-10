@@ -8,6 +8,7 @@
 class G4VPhysicalVolume;
 class G4LogicalVolume;
 class G4VSensitiveDetector;
+class G4PVPlacement;
 class G4VisAttributes;
 
 class BACDetectorConstruction : public G4VUserDetectorConstruction
@@ -27,8 +28,16 @@ private:
   G4LogicalVolume* TrdLW;
   G4LogicalVolume* UpReflLW;
   G4LogicalVolume* DownReflLW;
+  G4LogicalVolume* MPPCLW;
+
+
+  G4LogicalVolume* Part1LW;
+  G4LogicalVolume* Part2LW;
+
 
   std::vector<G4VisAttributes*> fVisAttributes;
+
+  const int version = 2;
 
   
 };

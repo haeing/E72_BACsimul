@@ -1,5 +1,6 @@
 #include "BACEventAction.hh"
 #include "AeroHit.hh"
+#include "MPPCHit.hh"
 
 #include "G4Event.hh"
 #include "G4VVisManager.hh"
@@ -41,7 +42,7 @@ G4VHitsCollection* GetHC(const G4Event* event, G4int collId){
 }
 
 BACEventAction::BACEventAction()
-  : G4UserEventAction(),fAeroHCID(-1)
+  : G4UserEventAction(),fAeroHCID(-1),fMPPCHCID(-1)
 {
 }
 
@@ -50,27 +51,30 @@ BACEventAction::~BACEventAction()
 
 void BACEventAction::BeginOfEventAction(const G4Event* evt)
 {
-  std::cout<<"event1"<<std::endl;
 
   G4int event_id = evt -> GetEventID();
-std::cout<<"event2"<<std::endl;
 
   if (event_id == 0)
     DefineTree();
-  std::cout<<"event3"<<std::endl;
 
-  if (fAeroHCID == -1){
+  if (fAeroHCID == -1&&fMPPCHCID==-1){
     auto sdManager = G4SDManager::GetSDMpointer();
-    std::cout<<"event4"<<std::endl;
+
+
+    
+    G4String mppcHCName = "mppcSD/mppcColl";
+
+
+    fMPPCHCID = sdManager->GetCollectionID(mppcHCName);
 
     G4String aeroHCName = "aeroSD/aeroColl";
-    std::cout<<"event5"<<std::endl;
-
     fAeroHCID = sdManager->GetCollectionID(aeroHCName);
-    std::cout<<"event6"<<std::endl;
+
+
 
 
   }
+  //phit=0.0;
  
 }
 
@@ -80,47 +84,47 @@ void BACEventAction::EndOfEventAction(const G4Event* evt/*, const G4Step* step*/
 {
 
   G4HCofThisEvent *HCE = evt -> GetHCofThisEvent();
-  std::cout<<"event7"<<std::endl;
   //if(!HCE)return;
-  /*
-  for(int i=0;i<HCE->GetCapacity();i++){
-    if(HCE->GetHC(i) ->GetSize()==0) continue;
-    auto hit = (PMTHit*)(HCE->GetHC(i)->GetHit(0));
-    edep[i] = hit -> GetEdep();
-    time[i] = hit -> GetTime();
-    
-  }
-  */
+  
+
+  
 
   auto hc = GetHC(evt,fAeroHCID);
-  std::cout<<"event8"<<std::endl;
+  auto hc1 = GetHC(evt,fMPPCHCID);
+
 
   //if (!hc) return;
   //auto nhit = hc->GetSize();
   //auto analysisManager = G4AnalysisManager::Instance();
   
-  //G4double phit = 0.0;
+  G4double phit = 0.0;
 
-  //G4double t;
+  G4double t;
 
   
   //for(unsigned int i=0;i<hc->GetSize();++i){
-
+  
 
   for (int i=0;i<HCE->GetCapacity();i++){
-    auto hit = (AeroHit*)(HCE->GetHC(i)->GetHit(0));
-    //phit += hit->GetPhotonCount();
-    //t = hit->GetTime();
+    auto hit = (MPPCHit*)(HCE->GetHC(i)->GetHit(0));
+    phit += hit->GetPhotonCount();
+    std::cout<<"photon"<<phit<<std::endl;
+    t = hit->GetTime();
 
   }
-  std::cout<<"event9"<<std::endl;
+
+  /*
+  for(int i=0;i<hc1->GetSize();++i){
+    auto hit = static_cast<MPPCHit*>(hc1->GetHit(i));
+    phit = phit+hit->GetPhotonCount();
+  }
+  */
 
   //Change->ShowInfoEvent();
   
 
   
   G4int event_id = evt->GetEventID();
-  std::cout<<"event10"<<std::endl;
 
 
   G4ThreeVector position = evt->GetPrimaryVertex(0)->GetPosition();
@@ -130,21 +134,20 @@ void BACEventAction::EndOfEventAction(const G4Event* evt/*, const G4Step* step*/
   zPrm = position.z();
 
 
-  //zenith = TMath::ACos(zPrm/5000);
-
-
   auto primary = evt->GetPrimaryVertex(0)->GetPrimary(0);
   double energy = primary->GetTotalEnergy();
+  //double energy = primary->GetKineticEnergy();
+  //double momentum = primary-> GetTotal
 
-  //numPho = phit;
+  numPho = phit;
 
 
   eventID = event_id;
   particleID = pdg;
   init_energy = energy;
-  //time = t;
+  time = t;
   tree->Fill();
-  std::cout<<"event11"<<std::endl;
+
   
 
 }
@@ -152,18 +155,16 @@ void BACEventAction::EndOfEventAction(const G4Event* evt/*, const G4Step* step*/
 void BACEventAction::DefineTree(){
   //tree = dynamic_cast<TTree*>(gFile->Get("tree"));
   tree = (TTree*)(gFile->Get("tree"));
-  std::cout<<"eventdefine1"<<std::endl;
   tree->Branch("eventID",&eventID,"eventID/I");
   tree->Branch("particleID",&particleID,"particleID/I");
   tree->Branch("init_energy",&init_energy,"init_energy/D");
-  //tree->Branch("numPho",&numPho,"numPho/D");
+  tree->Branch("numPho",&numPho,"numPho/D");
   //tree->Branch("edep",&edep,"edep/D");
   //tree->Branch("time",&time,"time/D");
   tree->Branch("xPrm",&xPrm,"xPrm/D");
   tree->Branch("yPrm",&yPrm,"yPrm/D");
   tree->Branch("zPrm",&zPrm,"zPrm/D");
-  //tree->Branch("zenith",&zenith,"zenith/D");
-  std::cout<<"eventdefine2"<<std::endl;
+
 	       
 }
 

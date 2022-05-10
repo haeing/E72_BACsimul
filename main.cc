@@ -6,6 +6,8 @@
 #include "BACStackingAction.hh"
 #include "AeroSD.hh"
 #include "AeroHit.hh"
+#include "MPPCSD.hh"
+#include "MPPCHit.hh"
 
 //#ifdef G4Multithreded
 //#include "G4MTRunManager.hh"

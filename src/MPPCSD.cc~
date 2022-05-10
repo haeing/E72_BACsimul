@@ -1,0 +1,139 @@
+#include "MPPCSD.hh"
+#include "MPPCHit.hh"
+
+#include "G4HCofThisEvent.hh"
+#include "G4VPhysicalVolume.hh"
+#include "G4TouchableHistory.hh"
+#include "G4Step.hh"
+#include "G4Track.hh"
+#include "G4VVisManager.hh"
+#include "G4TouchableHandle.hh"
+#include "G4SystemOfUnits.hh"
+#include "G4SDManager.hh"
+#include "G4ios.hh"
+
+MPPCSD::MPPCSD(G4String name)
+  : G4VSensitiveDetector(name), fHitsCollection(nullptr), fHCID(-1)
+{
+  collectionName.insert("mppcColl");
+}
+
+MPPCSD::~MPPCSD()
+{}
+
+void MPPCSD::Initialize(G4HCofThisEvent *hce)
+{
+
+  fHitsCollection = new MPPCHitsCollection(GetName(), collectionName[0]);
+  if (fHCID<0) fHCID = G4SDManager::GetSDMpointer()->GetCollectionID(fHitsCollection);
+  hce->AddHitsCollection(fHCID, fHitsCollection);
+  auto ahit = new MPPCHit();  //fill hits with zero energy deposition
+  ahit->SetEdep(0);
+  ahit->SetTime(0);
+  ahit->ClearPhotonCount();
+  fHitsCollection ->insert(ahit);
+  aa = 0.0;
+  std::cout<<"MPPCSD start"<<std::endl;
+  
+
+
+  
+
+}
+
+G4bool MPPCSD::ProcessHits(G4Step *step, G4TouchableHistory *)
+{
+
+  G4Track* track = step->GetTrack();
+  //G4double time = track->GetLocalTime();
+  //std::cout<<"MPPCSD localtime "<<time<<std::endl;
+  G4String particleName = track->GetDynamicParticle()->GetParticleDefinition()->GetParticleName();
+  //auto edep = step->GetTotalEnergyDeposit();
+
+  auto edep = track->GetKineticEnergy();
+  //G4ThreeVector hitmom = track->GetMomentum()/CLHEP::eV;
+  //G4double E_p = hitmom.mag();
+  
+  auto hitTime = step->GetPreStepPoint()->GetGlobalTime();
+  //if (edep==0.) return true;
+  //if (hitTime==0.) return true;
+
+  auto touchable = step->GetPreStepPoint()->GetTouchable();
+  auto physical = touchable->GetVolume();
+  auto copyNo = physical ->GetCopyNo();   //volume ID
+  auto hit = (MPPCHit*) fHitsCollection->GetHit(0);
+
+  
+
+  hit-> AddEdep(edep);
+  hit-> IncPhotonCount();
+  std::cout<<"PhotonCount"<<std::endl;
+  
+  if(hitTime>aa){
+    //hit->SetTime(hitTime);
+    aa=hitTime;
+    hit->SetTime(aa);
+  }
+
+
+  
+  //hit->SetTrackLen(tracklen);
+  //hit->SetStepNum(numstep);
+
+  //if(particleName == "opticalphoton"){
+  //const std::vector<const G4Track*>* secondaries = step->GetSecondaryInCurrentStep();
+  //if(secondaries->size()>0){
+     
+      //}
+      //}
+      //fHitsCollection->insert(hit);
+
+  
+  //auto ix=-1;
+  //check if this finger already has a hit
+  /*
+  for(std::size_t i=0;i<fHitsCollection->entries();++i){
+    if((*fHitsCollection)[i]->GetID() == copyNo){
+      ix = i;
+      break;
+    }
+  }
+
+  if(ix>=0){
+    //if it has, then take the earlier time
+    if ((*fHitsCollection)[ix]->GetTime()>hitTime){
+      (*fHitsCollection)[ix]->SetTime(hitTime);
+    }
+  }
+  else{
+    hit->SetTime(hitTime);
+  }
+  */
+  /*
+  else{
+    //if not, create a new hit and set it to the collection
+    auto hit1 = new MPPCHit(copyNo, hitTime);
+    hit1->SetTime(hitTime);
+  }
+  */
+  
+
+    
+  
+
+  
+  
+      
+  return true;
+}
+
+
+void MPPCSD::EndOfEvent(G4HCofThisEvent *HCE)
+{
+  aa = 0.0;
+
+}
+
+
+//void MPPCSD::PrintAll() const
+  

@@ -32,6 +32,7 @@ private:
   Int_t bp_file_ndata;
   Int_t bp_nAccess=0;
   const double mass_kaonm = 0.493677;
+  const double mass_pim = 0.139570;
 
 };
 
