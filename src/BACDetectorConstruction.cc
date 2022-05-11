@@ -160,8 +160,8 @@ G4VPhysicalVolume* BACDetectorConstruction::Construct()
   
   G4double mppc_rindex[2]={1.,1.};
   G4double mppc_ep[] = {1.6*eV,7.*eV};
-  //G4double mppc_abs[] = {1.0e-9*cm,1.0e-9*cm};
-  G4double mppc_abs[] = {1.0*cm,1.0*cm};
+  G4double mppc_abs[] = {1.0e-9*cm,1.0e-9*cm};
+  //G4double mppc_abs[] = {1.0*cm,1.0*cm};
 
   prop_mppc->AddProperty("RINDEX",mppc_ep,mppc_rindex,2)->SetSpline(true);
   prop_mppc->AddProperty("ABSLENGTH",mppc_ep,mppc_abs,2)->SetSpline(true);
@@ -255,13 +255,13 @@ G4VPhysicalVolume* BACDetectorConstruction::Construct()
     G4double Aeroz = 20.0 *mm;
     G4double reflect_thick = 0.3*mm;
     //G4double reflect_thick = 1*cm;
-    G4double mppc_thick = 0.5*cm;
+    G4double mppc_thick = 1*mm;
     G4double air_thin = 0.2*mm;
     //G4double air_thin = 1*cm;
     G4double empty_part1_z = 5*cm;
     G4double empty_part2_z = 10*cm;
 
-    G4double trd_dxa = 5.0*cm;    //-z position x length
+    G4double trd_dxa = 3.0*cm;    //-z position x length
     G4double trd_dxb = Aerox+air_thin*2;
     G4double trd_dya = 3*cm;                        
     G4double trd_dyb = empty_part2_z;                        
@@ -319,7 +319,15 @@ G4VPhysicalVolume* BACDetectorConstruction::Construct()
     G4SubtractionSolid* Part2 = new G4SubtractionSolid("Part2",part2_cover_second,trd_hole,rotX,G4ThreeVector(0,Aeroy/2+air_thin+reflect_thick/2,-reflect_thick*0.5));
     Part2LW = new G4LogicalVolume(Part2,Mylar,"Part2");
     new G4PVPlacement(0,G4ThreeVector(0,trd_dz/2,(empty_part2_z+reflect_thick)/2),Part2LW,"Part2",logicWorld,false,0,checkOverlaps);
-    }
+    
+
+    //MPPC---------------------------------------------------------------------------
+    G4Box* MPPC = new G4Box("MPPC",trd_dxa/2,trd_dya/2,mppc_thick/2);
+    MPPCLW = new G4LogicalVolume(MPPC,Al,"MPPC");
+    new G4PVPlacement(rotX,G4ThreeVector(0,Aeroy/2+air_thin+reflect_thick+trd_dz+mppc_thick/2,empty_part2_z/2+reflect_thick/2),MPPCLW,"MPPC",logicWorld,false,0,checkOverlaps);
+
+  }
+
   
   
 
@@ -388,11 +396,15 @@ G4VPhysicalVolume* BACDetectorConstruction::Construct()
   surface_mylar->SetMaterialPropertiesTable(sp_mylar);
   
   //new G4LogicalSkinSurface("mylar_surface",TrdLW,surface_mylar);
+  if(version==2){
   new G4LogicalSkinSurface("mylar_surface",Part1LW,surface_mylar);
   new G4LogicalSkinSurface("mylar_surface",Part2LW,surface_mylar);
-  //new G4LogicalSkinSurface("mylar_surface",UpReflLW,surface_mylar);
-  //new G4LogicalSkinSurface("mylar_surface",DownReflLW,surface_mylar);
-  //new G4LogicalSkinSurface("bs_surface",BlackLW,surface_mylar);
+  }
+  if(version==1){
+  new G4LogicalSkinSurface("mylar_surface",UpReflLW,surface_mylar);
+  new G4LogicalSkinSurface("mylar_surface",DownReflLW,surface_mylar);
+  new G4LogicalSkinSurface("bs_surface",BlackLW,surface_mylar);
+  }
 
   
   //tyvek surface--------------------------------------------------
@@ -400,10 +412,12 @@ G4VPhysicalVolume* BACDetectorConstruction::Construct()
   surface_tyvek->SetType(dielectric_dielectric);
   surface_tyvek->SetModel(unified);
   surface_tyvek->SetFinish(groundfrontpainted);
-  //new G4LogicalSkinSurface("tyvek_surface",TrdLW,surface_tyvek);
-  //new G4LogicalSkinSurface("tyvek_surface",UpReflLW,surface_tyvek);
-  //new G4LogicalSkinSurface("tyvek_surface",DownReflLW,surface_tyvek);
+  if(version==1){
+  new G4LogicalSkinSurface("tyvek_surface",TrdLW,surface_tyvek);
+  new G4LogicalSkinSurface("tyvek_surface",UpReflLW,surface_tyvek);
+  new G4LogicalSkinSurface("tyvek_surface",DownReflLW,surface_tyvek);
   //new G4LogicalSkinSurface("bs_surface",BlackLW,surface_tyvek);
+  }
 
 
   //MPPC surface--------------------------------------------------
@@ -431,13 +445,14 @@ G4VPhysicalVolume* BACDetectorConstruction::Construct()
 
 void BACDetectorConstruction::ConstructSDandField()
 {
+  
   auto aeroSD = new AeroSD("aeroSD");
   G4SDManager::GetSDMpointer()->AddNewDetector(aeroSD);
-  //AeroLW->SetSensitiveDetector(aeroSD);
+  AeroLW->SetSensitiveDetector(aeroSD);
 
   auto mppcSD = new MPPCSD("mppcSD");
   G4SDManager::GetSDMpointer()->AddNewDetector(mppcSD);
-  //MPPCLW->SetSensitiveDetector(mppcSD);
+  MPPCLW->SetSensitiveDetector(mppcSD);
 
 }
 
