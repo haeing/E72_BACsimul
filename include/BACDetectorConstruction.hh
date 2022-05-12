@@ -33,6 +33,7 @@ private:
 
   G4LogicalVolume* Part1LW;
   G4LogicalVolume* Part2LW;
+  G4LogicalVolume* CheckLW;
 
 
   std::vector<G4VisAttributes*> fVisAttributes;

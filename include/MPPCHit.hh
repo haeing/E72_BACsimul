@@ -41,8 +41,8 @@ public:
   void ClearPhotonCount() {fPhotons=0.0;}
 
 
-  //void SetPos(G4ThreeVector xyz) {fPos = xyz;}
-  //G4ThreeVector GetPos() const {return fPos;}
+  void SetPos(G4ThreeVector xyz) {fPos = xyz;}
+  G4ThreeVector GetPos() const {return fPos;}
   
 private:
   G4int fId;

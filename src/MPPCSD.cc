@@ -28,7 +28,7 @@ void MPPCSD::Initialize(G4HCofThisEvent *hce)
   if (fHCID<0) fHCID = G4SDManager::GetSDMpointer()->GetCollectionID(fHitsCollection);
   hce->AddHitsCollection(fHCID, fHitsCollection);
   auto ahit = new MPPCHit();  //fill hits with zero energy deposition
-  ahit->SetEdep(0);
+  //ahit->SetEdep(0);
   ahit->SetTime(0);
   ahit->ClearPhotonCount();
   fHitsCollection ->insert(ahit);
@@ -50,8 +50,10 @@ G4bool MPPCSD::ProcessHits(G4Step *step, G4TouchableHistory *)
   //std::cout<<"MPPCSD localtime "<<time<<std::endl;
   G4String particleName = track->GetDynamicParticle()->GetParticleDefinition()->GetParticleName();
   //auto edep = step->GetTotalEnergyDeposit();
+  auto worldPos = step->GetPreStepPoint()->GetPosition();
+  auto localPos = step->GetPreStepPoint()->GetTouchable()->GetHistory()->GetTopTransform().TransformPoint(worldPos);
 
-  auto edep = track->GetKineticEnergy();
+  //auto edep = track->GetKineticEnergy();
   //G4ThreeVector hitmom = track->GetMomentum()/CLHEP::eV;
   //G4double E_p = hitmom.mag();
   
@@ -63,10 +65,11 @@ G4bool MPPCSD::ProcessHits(G4Step *step, G4TouchableHistory *)
   auto physical = touchable->GetVolume();
   auto copyNo = physical ->GetCopyNo();   //volume ID
   auto hit = (MPPCHit*) fHitsCollection->GetHit(0);
+  hit->SetPos(localPos);
 
   
 
-  hit-> AddEdep(edep);
+  //hit-> AddEdep(edep);
   hit-> IncPhotonCount();
   std::cout<<"PhotonCount"<<std::endl;
   

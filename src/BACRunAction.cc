@@ -17,7 +17,9 @@
 
 BACRunAction::BACRunAction()
   :G4UserRunAction(), RfileName("test.root")
-{}
+{
+  
+}
 	     
 
 BACRunAction::~BACRunAction()
@@ -27,21 +29,17 @@ BACRunAction::~BACRunAction()
 void BACRunAction::BeginOfRunAction(const G4Run*)
 {
 
-  std::cout<<"Runaction1"<<std::endl;
   file = new TFile(RfileName, "recreate");
-  std::cout<<"Runaction2"<<std::endl;
   TTree *tree = new TTree("tree","simulation");
-  std::cout<<"Runaction3"<<std::endl;
   Tree = (TTree*)file->Get("tree");
-  std::cout<<"Runaction4"<<std::endl;
+
+  
 }
 
 void BACRunAction::EndOfRunAction(const G4Run*)
 {
 
-  std::cout<<"Runaction5"<<std::endl;
   Tree->Write();
-  std::cout<<"Runaction6"<<std::endl;
   file->Close();
 }
 

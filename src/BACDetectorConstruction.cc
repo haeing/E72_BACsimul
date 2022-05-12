@@ -95,13 +95,19 @@ G4VPhysicalVolume* BACDetectorConstruction::Construct()
   //Aerogel Property------------------------------------------------------
   G4MaterialPropertiesTable* prop_aerogel = new G4MaterialPropertiesTable();
 
+  
 
   G4double aerogel_ep[] = {1.6*eV,7.*eV};
-  G4double aerogel_abs[] = {100*mm,100*mm};
+  G4double aerogel_abs[] = {20*mm,20*mm};
   G4double aerogel_rindex[]={1.12,1.12};
+  G4double aerogel_ray[] = {6.16*pow(10,10),6.16*pow(10,10)};
+
+  assert(sizeof(aerogel_ep_abs)==sizeof(aerogel_abs));
+  //const G4int num_aerogel = sizeof(aerogel_ep_abs)/sizeof(G4double);
   
   prop_aerogel->AddProperty("RINDEX",aerogel_ep,aerogel_rindex,2)->SetSpline(true);
   prop_aerogel->AddProperty("ABSLENGTH",aerogel_ep,aerogel_abs,2)->SetSpline(true);
+  prop_aerogel->AddProperty("RAYLEIGH",aerogel_ep,aerogel_ray,2)->SetSpline(true);
   //prop_aerogel->AddProperty("FASTCOMPONENT",scin_ep1,scin_fast,numentries_scin1)->SetSpline(true);
   //prop_aerogel->AddProperty("SLOWCOMPONENT",scin_ep1,scin_fast,numentries_scin1)->SetSpline(true);
   //prop_aerogel->AddConstProperty("SCINTILLATIONYIELD",10000./MeV);
@@ -326,6 +332,13 @@ G4VPhysicalVolume* BACDetectorConstruction::Construct()
     MPPCLW = new G4LogicalVolume(MPPC,Al,"MPPC");
     new G4PVPlacement(rotX,G4ThreeVector(0,Aeroy/2+air_thin+reflect_thick+trd_dz+mppc_thick/2,empty_part2_z/2+reflect_thick/2),MPPCLW,"MPPC",logicWorld,false,0,checkOverlaps);
 
+
+    //Virtual plane
+    G4Box* Check = new G4Box("Check",Aerox/2+air_thin-1*mm,0.1*mm,empty_part2_z/2-1*mm);
+    CheckLW = new G4LogicalVolume(Check,world_mat,"Check");
+    new G4PVPlacement(0,G4ThreeVector(0,Aeroy/2+air_thin+reflect_thick/2,(empty_part2_z)/2),CheckLW,"Check",logicWorld,false,0,checkOverlaps);
+    
+
   }
 
   
@@ -452,7 +465,7 @@ void BACDetectorConstruction::ConstructSDandField()
 
   auto mppcSD = new MPPCSD("mppcSD");
   G4SDManager::GetSDMpointer()->AddNewDetector(mppcSD);
-  MPPCLW->SetSensitiveDetector(mppcSD);
+  CheckLW->SetSensitiveDetector(mppcSD);
 
 }
 
