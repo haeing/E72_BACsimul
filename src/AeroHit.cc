@@ -14,23 +14,23 @@
 
 #include <iomanip>
 
-G4ThreadLocal G4Allocator<AeroHit>* AeroHitAllocator;
+G4Allocator<AeroHit> AeroHitAllocator;
 
 AeroHit::AeroHit()
-  : G4VHit(),fEdep(0.)
+  :xyz(0.,0.,0.),tof(0.)
 {}
 
-AeroHit::AeroHit(G4int id, G4double time)
-  : G4VHit(),fEdep(0.),fTime(0.0), fId(id)//,fPhotons(0.0)
+AeroHit::AeroHit(G4ThreeVector& axyz, G4double t)
+  :xyz(axyz),tof(t)
 {}
 
 AeroHit::~AeroHit()
 {}
 
-AeroHit::AeroHit(const AeroHit &right)
-  : G4VHit(),fId(right.fId),fEdep(right.fEdep),fTime(right.fTime)
+AeroHit::AeroHit(G4ThreeVector &axyz, G4double t, G4int pid)
+  :xyz(axyz), tof(t),particleID(pid)
 {}
-
+/*
 const AeroHit& AeroHit::operator=(const AeroHit &right)
 {
   fEdep = right.fEdep;
@@ -66,4 +66,4 @@ std::vector<G4AttValue>* AeroHit::CreateAttValues() const
 
 
 
-
+*/

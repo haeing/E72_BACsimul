@@ -12,21 +12,20 @@
 #include <TObjArray.h>
 
 class G4Run;
+class BACAnalysisManager;
 
 
 class BACRunAction : public G4UserRunAction
 {
 public:
-  BACRunAction();
+  BACRunAction(BACAnalysisManager *analysisManager = 0);
   virtual ~BACRunAction();
 
-  virtual void BeginOfRunAction(const G4Run*);
-  virtual void EndOfRunAction(const G4Run*);
+  virtual void BeginOfRunAction(const G4Run *aRun);
+  virtual void EndOfRunAction(const G4Run *aRun);
 
 private:
-  G4String RfileName; 
-  TFile *file;
-  TTree *Tree;
+  BACAnalysisManager *anaMan;
 };
 
 #endif

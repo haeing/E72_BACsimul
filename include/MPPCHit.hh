@@ -14,59 +14,90 @@ class MPPCHit : public G4VHit
 {
 public:
   MPPCHit();
-  MPPCHit(G4int i, G4double t);
-  MPPCHit(const MPPCHit &right);
+  MPPCHit(G4ThreeVector& axyz, G4double t);
+  MPPCHit(G4ThreeVector& axyz, G4double t, G4int pid, G4double Wavelength);
   virtual ~MPPCHit();
 
+  //copy constructor & assignment operator
+  MPPCHit(const MPPCHit& right);
   const MPPCHit& operator=(const MPPCHit &right);
-  G4bool operator==(const MPPCHit &right) const;
+  //G4bool operator==(const MPPCHit &right) const;
 
-  inline void *operator new(size_t);
-  inline void operator delete(void *aHit);
+  //new/delete operators
+  void *operator new(size_t);
+  void operator delete(void *aHit);
 
+  /*
   virtual const std::map<G4String,G4AttDef>* GetAttDefs() const;
   virtual std::vector<G4AttValue>* CreateAttValues() const;
+  */
 
-  void SetEdep(G4double de) {fEdep = de;}
-  void AddEdep(G4double de) {fEdep += de;}
-  G4double GetEdep() const {return fEdep;}
+  const G4ThreeVector& GetPosition() const { return xyz; }
+  G4double GetTOF() const { return tof; }
+  //void SetEdep(G4double de) {fEdep = de;}
+  //void AddEdep(G4double de) {fEdep += de;}
+  //G4double GetEdep() const {return fEdep;}
+  G4double GetWavelength() const {return wavelengthMP; }
 
-  G4int GetID() const {return fId;}
+  G4int GetParticleID() const {return particleID;}
 
-  void SetTime(G4double dt) {fTime = dt;}
-  G4double GetTime() const {return fTime;}
+  //void SetTime(G4double dt) {fTime = dt;}
+  //G4double GetTime() const {return fTime;}
 
   void IncPhotonCount() {fPhotons++;}
   G4double GetPhotonCount() {return fPhotons;}
   void ClearPhotonCount() {fPhotons=0.0;}
 
 
-  void SetPos(G4ThreeVector xyz) {fPos = xyz;}
-  G4ThreeVector GetPos() const {return fPos;}
+  //void SetPos(G4ThreeVector xyz) {fPos = xyz;}
+  //G4ThreeVector GetPos() const {return fPos;}
   
 private:
-  G4int fId;
-  G4double fEdep;
-  G4double fTime;
+  G4ThreeVector xyz;
+  G4double tof;
+  //G4int fId;
+  G4int particleID;
+  G4double wavelengthMP;
+  //G4double fEdep;
+  //G4double fTime;
   G4double fPhotons;
   //G4ThreeVector fPos;
 };
 
+inline MPPCHit::MPPCHit(const MPPCHit& right)
+  : G4VHit()
+{
+  xyz = right.xyz;
+  tof = right.tof;
+  wavelengthMP = right.wavelengthMP;
+}
+
+inline const MPPCHit& MPPCHit::operator=
+(const MPPCHit& right)
+{
+  xyz = right.xyz;
+  tof = right.tof;
+  wavelengthMP = right.wavelengthMP;
+  return *this;
+}
+
+typedef G4THitsCollection<MPPCHit> MPPCHitsCollection;
+extern G4Allocator<MPPCHit> MPPCHitAllocator;
+
+
+/*
 using MPPCHitsCollection = G4THitsCollection<MPPCHit>;
 
 extern G4ThreadLocal G4Allocator<MPPCHit>* MPPCHitAllocator;
-
+*/
 inline void* MPPCHit::operator new(size_t)
 {
-  if (!MPPCHitAllocator){
-    MPPCHitAllocator = new G4Allocator<MPPCHit>;
-  }
-  return (void*)MPPCHitAllocator-> MallocSingle();
+  return static_cast<void*>(MPPCHitAllocator.MallocSingle());
 }
 
 inline void MPPCHit::operator delete(void* aHit)
 {
-  MPPCHitAllocator->FreeSingle((MPPCHit*) aHit);
+  MPPCHitAllocator.FreeSingle(static_cast<MPPCHit*> (aHit));
 }
 
 #endif

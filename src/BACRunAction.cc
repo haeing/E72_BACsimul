@@ -1,7 +1,7 @@
 #include "BACRunAction.hh"
+#include "BACAnalysisManager.hh"
 #include "BACPrimaryGeneratorAction.hh"
 #include "BACDetectorConstruction.hh"
-#include "BACActionInitialization.hh"
 #include "G4RunManager.hh"
 #include "G4Run.hh"
 #include "G4AccumulableManager.hh"
@@ -9,14 +9,16 @@
 #include "G4LogicalVolume.hh"
 #include "G4UnitsTable.hh"
 #include "G4SystemOfUnits.hh"
+#include "G4VVisManager.hh"
+#include "G4UImanager.hh"
 
 #include <TFile.h>
 #include <TTree.h>
 #include <TObjArray.h>
 #include <stdlib.h>
 
-BACRunAction::BACRunAction()
-  :G4UserRunAction(), RfileName("test.root")
+BACRunAction::BACRunAction(BACAnalysisManager *analysisManager)
+  :G4UserRunAction(), anaMan(analysisManager)
 {
   
 }
@@ -26,21 +28,27 @@ BACRunAction::~BACRunAction()
 {
 }
 
-void BACRunAction::BeginOfRunAction(const G4Run*)
+void BACRunAction::BeginOfRunAction(const G4Run *aRun)
 {
-
-  file = new TFile(RfileName, "recreate");
-  TTree *tree = new TTree("tree","simulation");
-  Tree = (TTree*)file->Get("tree");
-
-  
+  if(G4VVisManager::GetConcreteInstance()){
+    G4UImanager *UI = G4UImanager::GetUIpointer();
+  }
+  if(anaMan) anaMan->BeginOfRun(aRun);
 }
 
-void BACRunAction::EndOfRunAction(const G4Run*)
-{
 
-  Tree->Write();
-  file->Close();
+  
+
+
+void BACRunAction::EndOfRunAction(const G4Run *aRun)
+{
+  std::cout<<"runactionend1"<<std::endl;
+  if(G4VVisManager::GetConcreteInstance()){
+    G4UImanager *UI = G4UImanager::GetUIpointer();
+  }
+  std::cout<<"runactionend2"<<std::endl;
+  if (anaMan) anaMan->EndOfRun(aRun);
+  std::cout<<"runactionend3"<<std::endl;
 }
 
 

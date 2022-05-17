@@ -59,14 +59,12 @@ BACPrimaryGeneratorAction::~BACPrimaryGeneratorAction()
 void BACPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 {
 
-  std::cout<<"gene1"<<std::endl;
   G4int event_num = anEvent->GetEventID()+1;
   if(event_num% 1000 == 0)
     {
       G4cout<<"Event# "<<event_num<<G4endl;
     }
 
-  std::cout<<"gene2"<<std::endl;
 
   //new!!
 
@@ -84,9 +82,7 @@ void BACPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   */
   G4ThreeVector D(0*mm,0*mm,-100*mm);
   G4ThreeVector P(0,0,1);
-  std::cout<<"gene3"<<std::endl;
   //GenerateBeamKaonMBr(anEvent,D,P);
-  std::cout<<"gene4"<<std::endl;
 
 
   //test------------------------------------
@@ -101,7 +97,7 @@ void BACPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   fParticleGun->SetParticlePosition( G4ThreeVector(0,0,-10*cm) );
   fParticleGun->SetParticleEnergy(energy_beam);
   fParticleGun->GeneratePrimaryVertex( anEvent);
-
+  std::cout<<"gene5"<<std::endl;
 
 }
 

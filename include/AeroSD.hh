@@ -11,13 +11,17 @@ class G4TouchableHistory;
 
 class AeroSD : public G4VSensitiveDetector
 {
+private:
+  //int EMFlag;
+  AeroHitsCollection *AeroCollection;
 public:
   AeroSD(G4String name);
   //AeroSD(G4String name, ParamMan*);
   virtual ~AeroSD();
 
-  virtual void Initialize( G4HCofThisEvent *HCE );
+  virtual void Initialize( G4HCofThisEvent *HCTE);
   virtual G4bool ProcessHits(G4Step* astep, G4TouchableHistory *ROhist);
+  virtual void EndOfEvent(G4HCofThisEvent *HCTE);
   //virtual void EndOfEvent(G4HCofThisEvent*);
   
   //void EndOfEvent( G4HCofThisEvent *HCE );
@@ -28,14 +32,8 @@ public:
 
   //void PrintAll() const;
 
-private:
-  //int EMFlag;
-  AeroHitsCollection *fHitsCollection;
-  G4int fHCID;
-  G4double fEdep;
-  G4double fTime;
-  G4int id1;
-  G4int id3;
+
+
 };
 
 #endif

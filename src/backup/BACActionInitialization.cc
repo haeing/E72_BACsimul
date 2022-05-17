@@ -2,6 +2,7 @@
 #include "BACPrimaryGeneratorAction.hh"
 #include "BACRunAction.hh"
 #include "BACEventAction.hh"
+#include "BACAnalysisManager.hh"
 #include "BACStackingAction.hh"
 
 
@@ -21,6 +22,7 @@ void BACActionInitialization::Build() const
 {
   SetUserAction(new BACPrimaryGeneratorAction());
   SetUserAction(new BACRunAction());
+  //SetUserAction(new BACAnalysisManager());
   SetUserAction(new BACEventAction());
   SetUserAction(new BACStackingAction());
 

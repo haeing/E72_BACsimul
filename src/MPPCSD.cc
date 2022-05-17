@@ -13,20 +13,23 @@
 #include "G4ios.hh"
 
 MPPCSD::MPPCSD(G4String name)
-  : G4VSensitiveDetector(name), fHitsCollection(nullptr), fHCID(-1)
+  : G4VSensitiveDetector(name)//, fHitsCollection(nullptr), fHCID(-1)
 {
-  collectionName.insert("mppcColl");
+  collectionName.insert("MppcCollection");
 }
 
 MPPCSD::~MPPCSD()
 {}
 
-void MPPCSD::Initialize(G4HCofThisEvent *hce)
+void MPPCSD::Initialize(G4HCofThisEvent *HCTE)
 {
-  
-  fHitsCollection = new MPPCHitsCollection(GetName(), collectionName[0]);
-  if (fHCID<0) fHCID = G4SDManager::GetSDMpointer()->GetCollectionID(fHitsCollection);
-  hce->AddHitsCollection(fHCID, fHitsCollection);
+  static int HCID = -1;
+  MppcCollection = new MPPCHitsCollection(GetName(), collectionName[0]);
+  //if (fHCID<0) fHCID = G4SDManager::GetSDMpointer()->GetCollectionID(fHitsCollection);
+  if (HCID<0) HCID = GetCollectionID(0);
+
+  HCTE->AddHitsCollection(HCID, MppcCollection);
+  /*
   auto ahit = new MPPCHit();  //fill hits with zero energy deposition
   //ahit->SetEdep(0);
   ahit->SetTime(0);
@@ -34,33 +37,42 @@ void MPPCSD::Initialize(G4HCofThisEvent *hce)
   fHitsCollection ->insert(ahit);
   aa = 0.0;
   std::cout<<"MPPCSD start"<<std::endl;
-  
+  */
 
 
   
 
 }
 
-G4bool MPPCSD::ProcessHits(G4Step *step, G4TouchableHistory *)
+G4bool MPPCSD::ProcessHits(G4Step *astep, G4TouchableHistory *ROhist)
 {
-
-  std::cout<<"MPPCSD step"<<std::endl;
-  G4Track* track = step->GetTrack();
+  
+  const G4StepPoint* preStepPoint = astep-> GetPreStepPoint();
+  G4Track* atrack = astep->GetTrack();
   //G4double time = track->GetLocalTime();
   //std::cout<<"MPPCSD localtime "<<time<<std::endl;
-  G4String particleName = track->GetDynamicParticle()->GetParticleDefinition()->GetParticleName();
+  //G4String particleName = aStep->GetTrack()->GetDefinition->GetParticleName();
+  G4int pid = astep->GetTrack()->GetDefinition()-> GetPDGEncoding();
   //auto edep = step->GetTotalEnergyDeposit();
-  auto worldPos = step->GetPreStepPoint()->GetPosition();
-  auto localPos = step->GetPreStepPoint()->GetTouchable()->GetHistory()->GetTopTransform().TransformPoint(worldPos);
+  G4ThreeVector pos =preStepPoint->GetPosition();
+  G4double energy = preStepPoint->GetTotalEnergy();
+  const G4double h = 6.628e-34;
+  const G4double c = 3.0e+8;
+  G4double wavelength = ((h*c)/(energy*1.6e-13))/(1e-9); //nm
+  //to localPos = step->GetPreStepPoint()->GetTouchable()->GetHistory()->GetTopTransform().TransformPoint(worldPos);
 
   //auto edep = track->GetKineticEnergy();
   //G4ThreeVector hitmom = track->GetMomentum()/CLHEP::eV;
   //G4double E_p = hitmom.mag();
   
-  auto hitTime = step->GetPreStepPoint()->GetGlobalTime();
+  auto hitTime = astep->GetPreStepPoint()->GetGlobalTime();
   //if (edep==0.) return true;
   //if (hitTime==0.) return true;
 
+  MPPCHit* ahit = new MPPCHit(pos,wavelength,pid,hitTime);
+  MppcCollection->insert(ahit);
+  return true;
+  /*
   auto touchable = step->GetPreStepPoint()->GetTouchable();
   auto physical = touchable->GetVolume();
   auto copyNo = physical ->GetCopyNo();   //volume ID
@@ -71,14 +83,14 @@ G4bool MPPCSD::ProcessHits(G4Step *step, G4TouchableHistory *)
 
   //hit-> AddEdep(edep);
   hit-> IncPhotonCount();
-  std::cout<<"PhotonCount"<<std::endl;
   
   if(hitTime>aa){
     //hit->SetTime(hitTime);
     aa=hitTime;
     hit->SetTime(aa);
+  
   }
-
+  */
 
   
   //hit->SetTrackLen(tracklen);
@@ -128,13 +140,13 @@ G4bool MPPCSD::ProcessHits(G4Step *step, G4TouchableHistory *)
   
   
       
-  return true;
+
 }
 
 
-void MPPCSD::EndOfEvent(G4HCofThisEvent *HCE)
+void MPPCSD::EndOfEvent(G4HCofThisEvent *HCTE)
 {
-  aa = 0.0;
+  MppcCollection->PrintAllHits();
 
 }
 

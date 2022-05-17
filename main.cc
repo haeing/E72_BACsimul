@@ -1,9 +1,9 @@
 #include "BACDetectorConstruction.hh"
-#include "BACActionInitialization.hh"
 #include "BACPrimaryGeneratorAction.hh"
 #include "BACRunAction.hh"
 #include "BACEventAction.hh"
 #include "BACStackingAction.hh"
+#include "BACAnalysisManager.hh"
 #include "AeroSD.hh"
 #include "AeroHit.hh"
 #include "MPPCSD.hh"
@@ -37,26 +37,36 @@
 
 int main(int argc,char** argv)
 {
-  // Detect interactive mode (if no arguments) and define UI session
-  //
+  CLHEP::HepRandom::setTheSeed((unsigned)time(NULL));
+
   G4UIExecutive* ui = 0;
   if ( argc == 1 ) {
     ui = new G4UIExecutive(argc, argv);
   }
+
+  G4String histname;
+  if(argc>=3){
+    histname = argv[2];
+  }
+  else
+    {
+      histname = "geant4_test.root";
+    }
+  
 
   // Optionally: choose a different Random engine...
   // G4Random::setTheEngine(new CLHEP::MTwistEngine);
   
   // Construct the default run manager
   //
-  auto* runManager = new G4RunManager;
+  G4RunManager* runManager = new G4RunManager;
   //    G4RunManagerFactory::CreateRunManager(G4RunManagerType::Default);
 
   // Set mandatory initialization classes
   //
   // Detector construction
   runManager->SetUserInitialization(new BACDetectorConstruction());
-
+  
 
   // Physics list
   G4VModularPhysicsList* physicsList = new FTFP_BERT;
@@ -74,10 +84,19 @@ int main(int argc,char** argv)
 
   runManager->SetUserInitialization(physicsList);
 
-  
+  BACAnalysisManager *anaMan = new BACAnalysisManager(histname);
+  BACPrimaryGeneratorAction *priGen = new BACPrimaryGeneratorAction();
+  BACRunAction *runAction = new BACRunAction(anaMan);
+  BACEventAction *eventAction = new BACEventAction(anaMan);
+  BACStackingAction *stackAction = new BACStackingAction();
+
+  runManager->SetUserAction(priGen);
+  runManager->SetUserAction(runAction);
+  runManager->SetUserAction(eventAction);
+  runManager->SetUserAction(stackAction);
     
   // User action initialization
-  runManager->SetUserInitialization(new BACActionInitialization());
+  //runManager->SetUserInitialization(new BACActionInitialization());
   runManager->Initialize();
 
   // Initialize visualization
@@ -115,6 +134,8 @@ int main(int argc,char** argv)
 
   delete visManager;
   delete runManager;
+
+  return 0;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.....

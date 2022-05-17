@@ -14,23 +14,24 @@
 
 #include <iomanip>
 
-G4ThreadLocal G4Allocator<MPPCHit>* MPPCHitAllocator;
+G4Allocator<MPPCHit> MPPCHitAllocator;
 
 MPPCHit::MPPCHit()
-  : G4VHit(),fEdep(0.)
+  :xyz(0.,0.,0.),tof(0.)
 {}
 
-MPPCHit::MPPCHit(G4int id, G4double time)
-  : G4VHit(),fEdep(0.),fTime(0.0),fPhotons(0.0)
+MPPCHit::MPPCHit(G4ThreeVector& axyz, G4double t)
+  :xyz(axyz),tof(t)
 {}
 
 MPPCHit::~MPPCHit()
 {}
 
-MPPCHit::MPPCHit(const MPPCHit &right)
-  : G4VHit(),fId(right.fId),fTime(right.fTime),fPhotons(right.fPhotons),fPos(right.fPos)
+MPPCHit::MPPCHit(G4ThreeVector &axyz, G4double t, G4int pid, G4double Wavelength)
+  :xyz(axyz), tof(t),particleID(pid), wavelengthMP(Wavelength)
 {}
 
+/*
 const MPPCHit& MPPCHit::operator=(const MPPCHit &right)
 {
   fTime = right.fTime;
@@ -67,6 +68,7 @@ std::vector<G4AttValue>* MPPCHit::CreateAttValues() const
   return values;
 }
 
+*/
 
 
 

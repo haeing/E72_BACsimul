@@ -10,23 +10,30 @@
 #include <vector>
 #include <array>
 
-#include "BACPrimaryGeneratorAction.hh"
 
+class BACAnalysisManager;
 
-//const G4int kDim = 3;
 
 class BACEventAction : public G4UserEventAction
 {
 public:
-  BACEventAction();
+  BACEventAction(BACAnalysisManager *analysisManager=0);
   virtual ~BACEventAction();
+private:
+  BACEventAction(const BACEventAction &);
+  BACEventAction & operator = (const BACEventAction &);
 
-  virtual void BeginOfEventAction(const G4Event *);
-  virtual void EndOfEventAction(const G4Event *);
+public:
+  
+  virtual void BeginOfEventAction(const G4Event *anEvent);
+  virtual void EndOfEventAction(const G4Event *anEvent);
+
+protected:
+  BACAnalysisManager *anaMan;
 
 
 
-
+  /*
 private:
   void DefineTree();
 
@@ -44,7 +51,7 @@ private:
   G4double y_surface;
   TTree* tree;
 
-  
+  */
 
   
 };

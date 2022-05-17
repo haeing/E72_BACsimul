@@ -16,9 +16,9 @@ public:
   //MPPCSD(G4String name, ParamMan*);
   virtual ~MPPCSD();
 
-  virtual void Initialize( G4HCofThisEvent *HCE );
+  virtual void Initialize( G4HCofThisEvent *HCTE );
   virtual G4bool ProcessHits(G4Step* astep, G4TouchableHistory *ROhist);
-  virtual void EndOfEvent(G4HCofThisEvent *);
+  virtual void EndOfEvent(G4HCofThisEvent *HCTE);
   
   //void EndOfEvent( G4HCofThisEvent *HCE );
   //G4bool ProcessHits_constStep(const G4Step*, G4TouchableHistory* );
@@ -30,11 +30,8 @@ public:
 
 private:
   //int EMFlag;
-  MPPCHitsCollection *fHitsCollection;
-  G4int fHCID;
-  G4double aa;
-  //G4double fEdep;
-  //G4double fTime;
+  MPPCHitsCollection *MppcCollection;
+
 };
 
 #endif
