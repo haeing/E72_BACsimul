@@ -54,11 +54,16 @@ G4bool MPPCSD::ProcessHits(G4Step *astep, G4TouchableHistory *ROhist)
   //G4String particleName = aStep->GetTrack()->GetDefinition->GetParticleName();
   G4int pid = astep->GetTrack()->GetDefinition()-> GetPDGEncoding();
   //auto edep = step->GetTotalEnergyDeposit();
-  G4ThreeVector pos =preStepPoint->GetPosition();
-  G4double energy = preStepPoint->GetTotalEnergy();
+  G4ThreeVector worldPos =preStepPoint->GetPosition();
+  G4ThreeVector pos = preStepPoint->GetTouchable()->GetHistory()->GetTopTransform().TransformPoint(worldPos);
+  //G4double energy = preStepPoint->GetTotalEnergy();
+  //G4double energy = preStepPoint->GetKineticEnergy();
+  G4double energy = atrack->GetTotalEnergy();
+
   const G4double h = 6.628e-34;
   const G4double c = 3.0e+8;
-  G4double wavelength = ((h*c)/(energy*1.6e-13))/(1e-9); //nm
+  G4double wavelength = ((h*c)/(energy*pow(10,6)*1.6e-13))/(1e-9); //nm
+  //G4double wavelength = energy;
   //to localPos = step->GetPreStepPoint()->GetTouchable()->GetHistory()->GetTopTransform().TransformPoint(worldPos);
 
   //auto edep = track->GetKineticEnergy();

@@ -94,7 +94,7 @@ void BACPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   fParticleGun->SetParticleMomentumDirection ( G4ThreeVector(0,0,1) );
 
   //fParticleGun->SetParticleTime ( 0.0 );
-  fParticleGun->SetParticlePosition( G4ThreeVector(0,0,-10*cm) );
+  fParticleGun->SetParticlePosition( G4ThreeVector(0*cm,0*cm,-10*cm) );
   fParticleGun->SetParticleEnergy(energy_beam);
   fParticleGun->GeneratePrimaryVertex( anEvent);
   std::cout<<"gene5"<<std::endl;

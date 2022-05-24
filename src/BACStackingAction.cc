@@ -35,6 +35,9 @@ BACStackingAction::ClassifyNewTrack(const G4Track * aTrack)
         fCerenkovCounter++;
     }
   }
+  //G4String volume = aTrack->GetVolume()->GetName();
+  //aTrack->SetTrackStatus(fStopAndKill);
+  
   //auto *Change = new BACChange();
   //if(aTrack == nullptr)std::cout<<"error"<<std::endl;
   //Change->Analysis(*aTrack);

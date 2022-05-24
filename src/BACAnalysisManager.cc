@@ -61,8 +61,8 @@ void BACAnalysisManager::BeginOfRun(const G4Run*)
   tree->Branch("nhAero",&nhAero,"nhAero/I");
   tree->Branch("aeropid",aeropid,"aeropid[nhAero]/I");
   tree->Branch("aeroposx",aeroposx,"aeroposx[nhAero]/D");
-  tree->Branch("aeroposy",aeroposx,"aeroposy[nhAero]/D");
-  tree->Branch("aeroposz",aeroposx,"aeroposz[nhAero]/D");
+  tree->Branch("aeroposy",aeroposy,"aeroposy[nhAero]/D");
+  tree->Branch("aeroposz",aeroposz,"aeroposz[nhAero]/D");
   tree->Branch("aerotime",aerotime,"aerotime[nhAero]/D");
   
   
@@ -70,8 +70,8 @@ void BACAnalysisManager::BeginOfRun(const G4Run*)
   tree->Branch("nhMppc",&nhMppc,"nhMppc/I");
   tree->Branch("mppcpid",mppcpid,"mppcpid[nhMppc]/I");
   tree->Branch("mppcposx",mppcposx,"mppcposx[nhMppc]/D");
-  tree->Branch("mppcposy",mppcposx,"mppcposy[nhMppc]/D");
-  tree->Branch("mppcposz",mppcposx,"mppcposz[nhMppc]/D");
+  tree->Branch("mppcposy",mppcposy,"mppcposy[nhMppc]/D");
+  tree->Branch("mppcposz",mppcposz,"mppcposz[nhMppc]/D");
   tree->Branch("mppctime",mppctime,"mppctime[nhMppc]/D");
   tree->Branch("mppcwavelength",mppcwavelength,"mppcwavelength[nhMppc]/D");
 
@@ -154,6 +154,14 @@ void BACAnalysisManager::EndOfEvent(const G4Event* anEvent)
       aeropid[i] = aHit->GetParticleID();
     }
   nhAero = nhaero;
+
+  tree->Fill();
+  event++;
+
+  nEvt=0;
+  nhaero = 0;
+  nhmppc = 0;
+  
 }
 
 void BACAnalysisManager::SetEvtGen(int j,int partnum)

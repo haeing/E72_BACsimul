@@ -99,7 +99,7 @@ G4VPhysicalVolume* BACDetectorConstruction::Construct()
 
   G4double aerogel_ep[] = {1.6*eV,7.*eV};
   G4double aerogel_abs[] = {20*mm,20*mm};
-  G4double aerogel_rindex[]={1.12,1.12};
+  G4double aerogel_rindex[]={1.10,1.10};
   G4double aerogel_ray[] = {6.16*pow(10,10),6.16*pow(10,10)};
 
   assert(sizeof(aerogel_ep_abs)==sizeof(aerogel_abs));
@@ -256,16 +256,16 @@ G4VPhysicalVolume* BACDetectorConstruction::Construct()
 
   if(version==2){
     //Size-----------------------------------------------------------------------
-    G4double Aerox = 150.0 *mm;
-    G4double Aeroy = 130.0 *mm;
-    G4double Aeroz = 20.0 *mm;
+    G4double Aerox = 125.0 *mm;
+    G4double Aeroy = 125.0 *mm;
+    G4double Aeroz = 12.0 *mm;
     G4double reflect_thick = 0.3*mm;
     //G4double reflect_thick = 1*cm;
     G4double mppc_thick = 1*mm;
     G4double air_thin = 0.2*mm;
     //G4double air_thin = 1*cm;
-    G4double empty_part1_z = 5*cm;
-    G4double empty_part2_z = 10*cm;
+    G4double empty_part1_z = 1*cm;
+    G4double empty_part2_z = 15*cm;
 
     G4double trd_dxa = 3.0*cm;    //-z position x length
     G4double trd_dxb = Aerox+air_thin*2;
