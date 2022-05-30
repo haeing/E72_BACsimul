@@ -42,13 +42,10 @@ void BACRunAction::BeginOfRunAction(const G4Run *aRun)
 
 void BACRunAction::EndOfRunAction(const G4Run *aRun)
 {
-  std::cout<<"runactionend1"<<std::endl;
   if(G4VVisManager::GetConcreteInstance()){
     G4UImanager *UI = G4UImanager::GetUIpointer();
   }
-  std::cout<<"runactionend2"<<std::endl;
   if (anaMan) anaMan->EndOfRun(aRun);
-  std::cout<<"runactionend3"<<std::endl;
 }
 
 

@@ -86,8 +86,9 @@ void BACPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 
 
   //test------------------------------------
-  //G4double energy_beam = (sqrt(mass_kaonm*mass_kaonm+0.735*0.735) - mass_kaonm )*GeV;
-  G4double energy_beam = (sqrt(mass_pim*mass_pim+0.735*0.735) - mass_pim )*GeV;
+  G4double momentum = 0.735;
+  //G4double energy_beam = (sqrt(mass_kaonm*mass_kaonm+momentum*momentum) - mass_kaonm )*GeV;
+  G4double energy_beam = (sqrt(mass_pim*mass_pim+momentum*momentum) - mass_pim )*GeV;
   
   //fParticleGun -> SetParticleDefinition (particleTable -> FindParticle("kaon-"));
   fParticleGun -> SetParticleDefinition (particleTable -> FindParticle("pi-"));
@@ -97,7 +98,7 @@ void BACPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   fParticleGun->SetParticlePosition( G4ThreeVector(0*cm,0*cm,-10*cm) );
   fParticleGun->SetParticleEnergy(energy_beam);
   fParticleGun->GeneratePrimaryVertex( anEvent);
-  std::cout<<"gene5"<<std::endl;
+
 
 }
 

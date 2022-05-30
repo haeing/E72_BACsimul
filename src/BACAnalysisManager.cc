@@ -84,13 +84,9 @@ void BACAnalysisManager::BeginOfRun(const G4Run*)
 
 void BACAnalysisManager::EndOfRun(const G4Run*)
 {
-  std::cout<<"endofrun1"<<std::endl;
   tree->Write();
-  std::cout<<"endofrun2"<<std::endl;
   hfile->Write();
-  std::cout<<"endofrun3"<<std::endl;
   hfile->Close();
-  std::cout<<"endofrun4"<<std::endl;
 }
 
 void BACAnalysisManager::BeginOfEvent(const G4Event* anEvent)
@@ -130,6 +126,7 @@ void BACAnalysisManager::EndOfEvent(const G4Event* anEvent)
       mppcposy[i] = aHit->GetPosition().y();
       mppcposz[i] = aHit->GetPosition().z();
       mppcpid[i] = aHit->GetParticleID();
+      mppcwavelength[i] = aHit->GetWavelength();
     }
   nhMppc = nhmppc;
 

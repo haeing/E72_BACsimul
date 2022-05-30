@@ -62,7 +62,8 @@ G4bool MPPCSD::ProcessHits(G4Step *astep, G4TouchableHistory *ROhist)
 
   const G4double h = 6.628e-34;
   const G4double c = 3.0e+8;
-  G4double wavelength = ((h*c)/(energy*pow(10,6)*1.6e-13))/(1e-9); //nm
+  G4double wavelength = ((h*c)/(energy*1.6e-13))*(1e+9); //nm
+
   //G4double wavelength = energy;
   //to localPos = step->GetPreStepPoint()->GetTouchable()->GetHistory()->GetTopTransform().TransformPoint(worldPos);
 
@@ -74,9 +75,12 @@ G4bool MPPCSD::ProcessHits(G4Step *astep, G4TouchableHistory *ROhist)
   //if (edep==0.) return true;
   //if (hitTime==0.) return true;
 
-  MPPCHit* ahit = new MPPCHit(pos,wavelength,pid,hitTime);
+  atrack->SetTrackStatus(fStopAndKill);
+  MPPCHit* ahit = new MPPCHit(pos,hitTime,pid,wavelength);
   MppcCollection->insert(ahit);
   return true;
+
+  
   /*
   auto touchable = step->GetPreStepPoint()->GetTouchable();
   auto physical = touchable->GetVolume();
@@ -154,7 +158,4 @@ void MPPCSD::EndOfEvent(G4HCofThisEvent *HCTE)
   MppcCollection->PrintAllHits();
 
 }
-
-
-//void MPPCSD::PrintAll() const
   
