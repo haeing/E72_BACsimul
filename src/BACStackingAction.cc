@@ -36,11 +36,20 @@ BACStackingAction::ClassifyNewTrack(const G4Track * aTrack)
     }
   }
   /*
-  G4String volume = aTrack->GetVolume()->GetName();
-  if(volume=="mppcLW"){
-    aTrack->SetTrackStatus(fStopButAlive);
+  G4Track* tr = (G4Track*) aTrack;
+  G4String volume;
+  
+  
+  G4ParticleDefinition* particle = aTrack->GetDefinition();
+  
+  if(particle==G4PionMinus::PionMinus()){
+    volume = aTrack->GetNextVolume()->GetName();
+    //if(volume == "Part2LW")
+    //tr->SetTrackStatus(fStopButAlive);
+    std::cout<<" "<<particle<<std::endl;
   }
   */
+
   
   //auto *Change = new BACChange();
   //if(aTrack == nullptr)std::cout<<"error"<<std::endl;

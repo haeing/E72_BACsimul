@@ -14,7 +14,7 @@ class G4VisAttributes;
 class BACDetectorConstruction : public G4VUserDetectorConstruction
 {
 public:
-  BACDetectorConstruction();
+  BACDetectorConstruction(const G4String &num_aerogel, const G4String &reflec, const G4String &light);
   virtual ~BACDetectorConstruction();
 
   virtual void ConstructSDandField();
@@ -38,7 +38,11 @@ private:
 
   std::vector<G4VisAttributes*> fVisAttributes;
 
-  const int version = 2;
+  const int version = 1;
+
+  G4String num_aero;
+  G4String reflect_part_length;
+  G4String light_guide_length;
 
   
 };

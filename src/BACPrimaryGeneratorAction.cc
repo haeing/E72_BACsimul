@@ -100,6 +100,9 @@ void BACPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   fParticleGun->GeneratePrimaryVertex( anEvent);
 
 
+  
+
+
 }
 
 void BACPrimaryGeneratorAction::GenerateBeamKaonMBr(G4Event* anEvent, G4ThreeVector D, G4ThreeVector P)
