@@ -54,8 +54,9 @@ void BACAnalysisManager::BeginOfRun(const G4Run*)
 
   tree->Branch("event",&event, "event/I");
   tree->Branch("nEvt",&nEvt, "nEvt/I");
-  tree->Branch("evtid",evtid,"evtid[nEvt]/I");
-  tree->Branch("evtpid",evtpid,"evtpid[nEvt]/I");
+  //tree->Branch("evtid",evtid,"evtid[nEvt]/I");
+  tree->Branch("evtpid",&evtpid,"evtpid/I");
+
 
   //Aerogel
   tree->Branch("nhAero",&nhAero,"nhAero/I");
@@ -104,7 +105,8 @@ void BACAnalysisManager::EndOfEvent(const G4Event* anEvent)
   G4int nhmppc = 0;
   G4int nhaero = 0;
 
-  
+  G4int pdg = anEvent->GetPrimaryVertex(0)->GetPrimary(0)->GetPDGcode();
+  evtpid = pdg;
 
   
   MPPCHitsCollection *MPPCHC = 0;
@@ -164,8 +166,8 @@ void BACAnalysisManager::EndOfEvent(const G4Event* anEvent)
 void BACAnalysisManager::SetEvtGen(int j,int partnum)
 {
   if(nEvt<j) nEvt=j;
-  evtid[j-1]=j;
-  evtpid[j-1]=partnum;
+  //evtid[j-1]=j;
+  //evtpid[j-1]=partnum;
 }
 
 

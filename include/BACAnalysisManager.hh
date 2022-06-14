@@ -46,7 +46,8 @@ private:
 
   int nEvt;
   int evtid[num_evtgen];
-  int evtpid[num_evtgen];
+  //int evtpid[num_evtgen];
+  int evtpid;
 
   int nhMppc;
   int mppcpid[num_mppchit];
