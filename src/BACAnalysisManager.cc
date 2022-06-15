@@ -56,6 +56,7 @@ void BACAnalysisManager::BeginOfRun(const G4Run*)
   tree->Branch("nEvt",&nEvt, "nEvt/I");
   //tree->Branch("evtid",evtid,"evtid[nEvt]/I");
   tree->Branch("evtpid",&evtpid,"evtpid/I");
+  //tree->Branch("evtpid",evtpid,"evtpid[nEvt]/I");
 
 
   //Aerogel
