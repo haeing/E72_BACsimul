@@ -38,7 +38,7 @@ private:
 
   std::vector<G4VisAttributes*> fVisAttributes;
 
-  const int version = 2;
+  const int version = 1;
 
   G4String num_aero;
   G4String reflect_part_length;

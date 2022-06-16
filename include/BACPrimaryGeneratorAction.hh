@@ -20,7 +20,7 @@ public:
   BACPrimaryGeneratorAction();
   virtual ~BACPrimaryGeneratorAction();
   virtual void GeneratePrimaries(G4Event *anEvent);
-  virtual void GenerateBeamKaonMBr(G4Event *anEvent, G4ThreeVector D, G4ThreeVector P);
+  virtual void GenerateBeamKaonMBr(G4Event *anEvent, G4ThreeVector D, G4ThreeVector P,G4String particle);
   virtual void ReadBeamProfile(G4ThreeVector &X, G4ThreeVector &P);
   const G4ParticleGun* GetParticleGun() const {return fParticleGun;}
 
@@ -33,6 +33,8 @@ private:
   Int_t bp_nAccess=0;
   const double mass_kaonm = 0.493677;
   const double mass_pim = 0.139570;
+  G4String particle = "pion";
+  G4double energy;
 
 };
 

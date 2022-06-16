@@ -35,7 +35,7 @@ void AeroSD::Initialize(G4HCofThisEvent *HCTE)
   if(HCID<0) HCID = GetCollectionID(0);
   
   HCTE->AddHitsCollection(HCID, AeroCollection);
-
+  
 }
 
 G4bool AeroSD::ProcessHits(G4Step *astep, G4TouchableHistory *ROhist)
@@ -44,6 +44,8 @@ G4bool AeroSD::ProcessHits(G4Step *astep, G4TouchableHistory *ROhist)
   G4Track* atrack = astep->GetTrack();
   G4int pid = astep->GetTrack()->GetDefinition()->GetPDGEncoding();
   G4ThreeVector pos =preStepPoint->GetPosition();
+      
+
   
   G4double tof = astep->GetPreStepPoint()->GetGlobalTime();
 
@@ -59,6 +61,7 @@ void AeroSD::EndOfEvent(G4HCofThisEvent* HCTE)
 {
 
   AeroCollection->PrintAllHits();
+
 
 }
 

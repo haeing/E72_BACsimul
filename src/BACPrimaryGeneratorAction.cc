@@ -20,9 +20,10 @@ BACPrimaryGeneratorAction::BACPrimaryGeneratorAction()
   G4int n_particle = 1;
   //G4Random::setTheSeed(time(NULL));
   //gRandom->SetSeed(time(0));
-
+  
   fParticleGun = new G4ParticleGun(n_particle);
   /*
+  
   G4String beamfilename = "/home/cosmus/E72/BACSimul/param/beam/beam.k.run69_0130.root";
   TFile *beam_file = new TFile(beamfilename, "read");
   TTree *beam_tree = (TTree*)beam_file->Get("tr");
@@ -47,7 +48,7 @@ BACPrimaryGeneratorAction::BACPrimaryGeneratorAction()
   beam_tree->SetBranchAddress("pIny",  &pIny);
   beam_tree->SetBranchAddress("pInz",  &pInz);
   */
-  //CLHEP::HepRandom::setTheSeed(time(NULL));
+
 }
 
 BACPrimaryGeneratorAction::~BACPrimaryGeneratorAction()
@@ -80,24 +81,32 @@ void BACPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   bvy_ = confMan->GetBeamVY();
   bvz_ = confMan->GetBeamVZ();
   */
+  //fParticleGun -> SetParticleDefinition (particleTable -> FindParticle("kaon-"));
   G4ThreeVector D(0*mm,0*mm,-100*mm);
   G4ThreeVector P(0,0,1);
-  //GenerateBeamKaonMBr(anEvent,D,P);
 
-
-  //test------------------------------------
-  G4double momentum = 0.735;
-  //G4double energy_beam = (sqrt(mass_kaonm*mass_kaonm+momentum*momentum) - mass_kaonm )*GeV;
-  G4double energy_beam = (sqrt(mass_pim*mass_pim+momentum*momentum) - mass_pim )*GeV;
-  
   //fParticleGun -> SetParticleDefinition (particleTable -> FindParticle("kaon-"));
-  fParticleGun -> SetParticleDefinition (particleTable -> FindParticle("pi-"));
+  GenerateBeamKaonMBr(anEvent,D,P,particle);
+
+
+ 
+
+  
+  //test------------------------------------
+  /*
+  G4double momentum = 0.735;
+  G4double energy_beam = (sqrt(mass_kaonm*mass_kaonm+momentum*momentum) - mass_kaonm )*GeV;
+  //G4double energy_beam = (sqrt(mass_pim*mass_pim+momentum*momentum) - mass_pim )*GeV;
+
+  fParticleGun -> SetParticleDefinition (particleTable -> FindParticle("kaon-"));
+  //fParticleGun->SetParticleDefinition (particleTable -> FindParticle("pi-"));
   fParticleGun->SetParticleMomentumDirection ( G4ThreeVector(0,0,1) );
 
   //fParticleGun->SetParticleTime ( 0.0 );
   fParticleGun->SetParticlePosition( G4ThreeVector(0*cm,0*cm,-10*cm) );
   fParticleGun->SetParticleEnergy(energy_beam);
   fParticleGun->GeneratePrimaryVertex( anEvent);
+  */
 
 
   
@@ -105,24 +114,23 @@ void BACPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 
 }
 
-void BACPrimaryGeneratorAction::GenerateBeamKaonMBr(G4Event* anEvent, G4ThreeVector D, G4ThreeVector P)
+void BACPrimaryGeneratorAction::GenerateBeamKaonMBr(G4Event* anEvent, G4ThreeVector D, G4ThreeVector P,G4String particle)
 {
-  fParticleGun -> SetParticleDefinition (particleTable -> FindParticle("kaon-"));
+  //fParticleGun -> SetParticleDefinition (particleTable -> FindParticle("pi-"));
 
-  std::cout<<"1"<<std::endl;
 
   G4ThreeVector X_file, P_file;
   ReadBeamProfile(X_file, P_file);
-  std::cout<<"2"<<std::endl;
 
   G4ThreeVector beamx(X_file.x()*mm + D.x(), X_file.y()*mm + D.y(), D.z());
-  std::cout<<"3"<<std::endl;
 
   double beam_file_mag = P_file.mag();
-  double beam_mag_set = P.mag()/0.9*beam_file_mag; //for 0.9 GeV/c beam
+  double beam_mag_set = (P.mag()/0.9)*beam_file_mag; //for 0.9 GeV/c beam
 
 
-  G4ThreeVector p_dir(P_file.x()/beam_file_mag, P_file.y()/beam_file_mag, P_file.z()/beam_file_mag) ; //from beam profile file 
+
+
+  G4ThreeVector p_dir(P_file.x()/beam_file_mag, P_file.y()/beam_file_mag, P_file.z()/beam_file_mag) ; //from beam profile file
 
 
   G4ThreeVector beamp (beam_mag_set*p_dir.x(), beam_mag_set*p_dir.y(), beam_mag_set*p_dir.z());
@@ -138,21 +146,30 @@ void BACPrimaryGeneratorAction::GenerateBeamKaonMBr(G4Event* anEvent, G4ThreeVec
   //G4ThreeVector beampu =  beamp_rotate/beamp_rotate.mag();
   G4ThreeVector beampu =  beamp/beamp.mag();
 
-  //G4double energy = (sqrt(mass_kaonm*mass_kaonm+beamp_rotate.mag2()) - mass_kaonm )*GeV;
-  G4double energy = (sqrt(mass_kaonm*mass_kaonm+beamp.mag2()) - mass_kaonm )*GeV;
+  
 
+  if(particle=="kaon"){
+    energy = (sqrt(mass_kaonm*mass_kaonm+beamp.mag2()) - mass_kaonm )*GeV;
+    fParticleGun -> SetParticleDefinition (particleTable -> FindParticle("kaon-"));
+  }
 
+  if(particle=="pion"){
+    energy = (sqrt(mass_pim*mass_pim+beamp.mag2()) - mass_pim )*GeV;
+    fParticleGun -> SetParticleDefinition (particleTable -> FindParticle("pi-"));
+  }
+  
   fParticleGun->SetParticleMomentumDirection ( beampu );
-  std::cout<<"4"<<std::endl;
 
   //fParticleGun->SetParticleTime ( 0.0 );
   fParticleGun->SetParticlePosition( beamx );
-  std::cout<<"5"<<std::endl;
+
   fParticleGun->SetParticleEnergy( energy );
-  std::cout<<"6"<<std::endl;
+
   fParticleGun->GeneratePrimaryVertex( anEvent);
-  std::cout<<"7"<<std::endl;
+
   //anaMan_->SetBeam(1, beamx, beamp_rotate); Analysismanager
+
+  
 
 }
 
@@ -160,12 +177,12 @@ void BACPrimaryGeneratorAction::ReadBeamProfile( G4ThreeVector & X, G4ThreeVecto
 {
 
   G4String beamfilename = "/home/cosmus/E72/BACSimul/param/beam/beam.k.run69_0130.root";
-  //std::cout<<"read-1"<<std::endl;
+
   TFile *beam_file = new TFile(beamfilename, "read");
-  //std::cout<<"read0"<<std::endl;
+
   
   TTree *beam_tree = (TTree*)beam_file->Get("tr");
-  std::cout<<"read1"<<std::endl;
+
   int ntK18;
   double pointInx[1];
   double pointIny[1];
@@ -180,14 +197,14 @@ void BACPrimaryGeneratorAction::ReadBeamProfile( G4ThreeVector & X, G4ThreeVecto
   beam_tree->SetBranchAddress("pointIny",  &pointIny);
   beam_tree->SetBranchAddress("pointInz",  &pointInz);
 
-  std::cout<<"read2"<<std::endl;
+
   beam_tree->SetBranchAddress("pInx",  &pInx);
   beam_tree->SetBranchAddress("pIny",  &pIny);
   beam_tree->SetBranchAddress("pInz",  &pInz);
 
   bp_file_ndata = beam_tree->GetEntries();
 
-  std::cout<<"read3"<<std::endl;
+
   if(bp_file_ndata == bp_nAccess) bp_nAccess = 0;
   
   beam_tree->GetEntry(bp_nAccess);
@@ -195,17 +212,17 @@ void BACPrimaryGeneratorAction::ReadBeamProfile( G4ThreeVector & X, G4ThreeVecto
   G4ThreeVector TVp(pInx[0], pIny[0], pInz[0]);
   G4ThreeVector TVx(pointInx[0], pointIny[0], pointInz[0]);
 
-  std::cout<<"read4"<<std::endl;
+
   X=TVx;
   P=TVp;
   bp_nAccess++;
-  std::cout<<"read5"<<std::endl;
+
 
   //G4cout<<"[PrimaryGeneratorAction]nAccess: "<< bp_nAccess <<G4endl;
   //G4cout<<"[PrimaryGeneratorAction]x and p: "<< TVx <<"   "<< TVp <<G4endl;
 
   beam_file->Close();
-  std::cout<<"read6"<<std::endl;
+
 }
 
 

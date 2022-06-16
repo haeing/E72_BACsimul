@@ -16,6 +16,7 @@ private:
   G4ThreeVector xyz;
   G4int particleID;
   G4double tof;
+
   
 public:
   AeroHit();
@@ -37,6 +38,7 @@ public:
   G4double GetTOF() const {return tof;}
   
   G4int GetParticleID() const {return particleID;}
+  //G4int GetNum() const {return count_ce;}
 
   //void SetTime(G4double dt) {fTime = dt;}
 
@@ -57,6 +59,7 @@ inline AeroHit::AeroHit(const AeroHit& right)
   xyz = right.xyz;
   tof = right.tof;
   particleID = right.particleID;
+
 }
 
 inline const AeroHit& AeroHit::operator=
@@ -65,6 +68,7 @@ inline const AeroHit& AeroHit::operator=
   xyz = right.xyz;
   tof = right.tof;
   particleID = right.particleID;
+
   return *this;
 }
 

@@ -14,6 +14,7 @@ class AeroSD : public G4VSensitiveDetector
 private:
   //int EMFlag;
   AeroHitsCollection *AeroCollection;
+
 public:
   AeroSD(G4String name);
   //AeroSD(G4String name, ParamMan*);

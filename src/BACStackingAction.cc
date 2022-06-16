@@ -9,6 +9,8 @@
 #include "G4Track.hh"
 #include "G4ios.hh"
 
+int gCerenkovCounter;
+
 
 BACStackingAction::BACStackingAction()
   : G4UserStackingAction(),
@@ -31,8 +33,10 @@ BACStackingAction::ClassifyNewTrack(const G4Track * aTrack)
     { // particle is secondary
       if(aTrack->GetCreatorProcess()->GetProcessName() == "Scintillation")
         fScintillationCounter++;
-      if(aTrack->GetCreatorProcess()->GetProcessName() == "Cerenkov")
+      if(aTrack->GetCreatorProcess()->GetProcessName() == "Cerenkov"){
         fCerenkovCounter++;
+	gCerenkovCounter++;
+      }
     }
   }
   /*
@@ -59,6 +63,7 @@ BACStackingAction::ClassifyNewTrack(const G4Track * aTrack)
   return fUrgent;
 }
 
+
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void BACStackingAction::NewStage()
@@ -68,6 +73,7 @@ void BACStackingAction::NewStage()
   std::cout << "Number of Cerenkov photons produced in this event : "
 	    << fCerenkovCounter << std::endl;
 
+
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -76,4 +82,6 @@ void BACStackingAction::PrepareNewEvent()
 {
   fScintillationCounter = 0;
   fCerenkovCounter = 0;
+  gCerenkovCounter = 0;
+
 }

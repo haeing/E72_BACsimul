@@ -462,7 +462,6 @@ if(version==1){
   G4double z[numRZ];
   G4double r_in[numRZ];
 
-  std::cout<<"ongoing"<<std::endl;
   for(int i=0;i<numRZ;i++){
     z[i] = i*mm;
     //r_in[i] = 0*mm;
@@ -472,10 +471,10 @@ if(version==1){
     G4double x = r[i-1];
     while(fabs(f(x,z[i]))>0.1){
       x+=0.0001*mm;
-      std::cout<<f(x,z[i])<<std::endl;
+      //std::cout<<f(x,z[i])<<std::endl;
     }
     r[i] = x;
-    std::cout<<r[i]<<std::endl;
+    //std::cout<<r[i]<<std::endl;
   }
 
 

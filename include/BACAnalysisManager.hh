@@ -48,6 +48,11 @@ private:
   int evtid[num_evtgen];
   //int evtpid[num_evtgen];
   int evtpid;
+  double evtposx;
+  double evtposy;
+  double evtposz;
+  int evtnumce;
+  
 
   int nhMppc;
   int mppcpid[num_mppchit];
@@ -63,6 +68,7 @@ private:
   double aeroposx[num_aerohit];
   double aeroposy[num_aerohit];
   double aeroposz[num_aerohit];
+
   
   
 };

@@ -5,6 +5,8 @@
 #include "AeroHit.hh"
 #include "MPPCHit.hh"
 
+
+
 #include "Randomize.hh"
 #include "TFile.h"
 #include "TTree.h"
@@ -14,23 +16,21 @@
 #include <string>
 #include <sstream>
 
+extern int gCerenkovCounter;
+
 BACAnalysisManager::BACAnalysisManager(const G4String & histname)
   :outfile(histname), fActive_(true)
 {}
 
 BACAnalysisManager::~BACAnalysisManager()
 {
-  std::cout<<"analysisdelete"<<std::endl;
   SaveFile();
-  std::cout<<"analysisdelete2"<<std::endl;
 }
 
 void BACAnalysisManager::SaveFile(void) const
 {
-  std::cout<<"savefile"<<std::endl;
   if (fActive_)
     hfile->Write();
-  std::cout<<"savefile2"<<std::endl;
 }
 
 void BACAnalysisManager::Terminate(void) const
@@ -45,7 +45,7 @@ void BACAnalysisManager::Terminate(void) const
 void BACAnalysisManager::BeginOfRun(const G4Run*)
 {
 
-  std::cout<<"BeginofRun"<<std::endl;
+  
 
   G4SDManager* SDManager = G4SDManager::GetSDMpointer();
 
@@ -56,7 +56,11 @@ void BACAnalysisManager::BeginOfRun(const G4Run*)
   tree->Branch("nEvt",&nEvt, "nEvt/I");
   //tree->Branch("evtid",evtid,"evtid[nEvt]/I");
   tree->Branch("evtpid",&evtpid,"evtpid/I");
+  tree->Branch("evtposx",&evtposx,"evtposx/D");
+  tree->Branch("evtposy",&evtposy,"evtposy/D");
+  tree->Branch("evtposz",&evtposz,"evtposz/D");
   //tree->Branch("evtpid",evtpid,"evtpid[nEvt]/I");
+  tree->Branch("evtnumce",&evtnumce,"evtnumce/I");
 
 
   //Aerogel
@@ -66,6 +70,7 @@ void BACAnalysisManager::BeginOfRun(const G4Run*)
   tree->Branch("aeroposy",aeroposy,"aeroposy[nhAero]/D");
   tree->Branch("aeroposz",aeroposz,"aeroposz[nhAero]/D");
   tree->Branch("aerotime",aerotime,"aerotime[nhAero]/D");
+
   
   
   //MPPC
@@ -80,7 +85,6 @@ void BACAnalysisManager::BeginOfRun(const G4Run*)
   event = 0;
   nEvt = 0;
 
-  std::cout<<"BeginofRunend"<<std::endl;
 
 }
 
@@ -108,6 +112,17 @@ void BACAnalysisManager::EndOfEvent(const G4Event* anEvent)
 
   G4int pdg = anEvent->GetPrimaryVertex(0)->GetPrimary(0)->GetPDGcode();
   evtpid = pdg;
+  
+  G4ThreeVector pripos = anEvent->GetPrimaryVertex(0)->GetPosition();
+  G4double prix = pripos.x();
+  G4double priy = pripos.y();
+  G4double priz = pripos.z();
+  evtposx = prix;
+  evtposy = priy;
+  evtposz = priz;
+
+  evtnumce = gCerenkovCounter;
+  
 
   
   MPPCHitsCollection *MPPCHC = 0;
@@ -152,6 +167,7 @@ void BACAnalysisManager::EndOfEvent(const G4Event* anEvent)
       aeroposy[i] = aHit->GetPosition().y();
       aeroposz[i] = aHit->GetPosition().z();
       aeropid[i] = aHit->GetParticleID();
+
     }
   nhAero = nhaero;
 
@@ -161,6 +177,8 @@ void BACAnalysisManager::EndOfEvent(const G4Event* anEvent)
   nEvt=0;
   nhaero = 0;
   nhmppc = 0;
+
+
   
 }
 
