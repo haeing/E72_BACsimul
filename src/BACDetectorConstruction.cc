@@ -74,8 +74,9 @@ G4VPhysicalVolume* BACDetectorConstruction::Construct()
   G4Element* B = new G4Element("Boron","B",5.,10.811*g/mole);
   G4Element* Na = new G4Element("Na","Na",11.,23.0*g/mole);
   G4Element* Si = new G4Element("Silicon","Si",14.,28.0844*g/mole);
+  G4Element* Cl = new G4Element("Chlorine","Cl",17.,35.453*g/mole);
   G4Element* K = new G4Element("Potassium","K",19.,39.093*g/mole);
-
+  
 
   G4Material *Aerogel = new G4Material("Aerogel",0.2000*g/cm3,2);
   Aerogel->AddElement(Si,1);
@@ -93,6 +94,12 @@ G4VPhysicalVolume* BACDetectorConstruction::Construct()
   G4Material* Tyvek = new G4Material("Tyvek",0.38*g/cm3,2);
   Tyvek->AddElement(C,1);
   Tyvek->AddElement(H,2);
+
+  G4Material* Epoxi = new G4Material("Epoxi",1.1*g/cm3,4);
+  Epoxi->AddElement(C, 21);
+  Epoxi->AddElement(H, 25);
+  Epoxi->AddElement(O,  5);
+  Epoxi->AddElement(Cl, 1);
 
 
 
@@ -183,13 +190,24 @@ G4VPhysicalVolume* BACDetectorConstruction::Construct()
   
   G4double mppc_rindex[2]={1.,1.};
   G4double mppc_ep[] = {1.6*eV,7.*eV};
-  G4double mppc_abs[] = {1.0e-9*cm,1.0e-9*cm};
+  G4double mppc_abs[] = {1.0*cm,1.0*cm};
   //G4double mppc_abs[] = {1.0*cm,1.0*cm};
 
   prop_mppc->AddProperty("RINDEX",mppc_ep,mppc_rindex,2)->SetSpline(true);
   prop_mppc->AddProperty("ABSLENGTH",mppc_ep,mppc_abs,2)->SetSpline(true);
   Al->SetMaterialPropertiesTable(prop_mppc);
 
+  //MPPC surface (Epoxi) property
+  G4MaterialPropertiesTable* prop_epoxi = new G4MaterialPropertiesTable();
+ 
+  G4double epoxi_rindex[2]={1.5,1.5};
+  G4double epoxi_ep[] = {1.6*eV,7.*eV};
+  G4double epoxi_abs[] = {1.0*cm,1.0*cm};
+
+
+  prop_epoxi->AddProperty("RINDEX",epoxi_ep,epoxi_rindex,2)->SetSpline(true);
+  prop_epoxi->AddProperty("ABSLENGTH",epoxi_ep,epoxi_abs,2)->SetSpline(true);
+  Epoxi->SetMaterialPropertiesTable(prop_epoxi);
   
 
   
@@ -368,7 +386,8 @@ if(version==1){
     //MPPC---------------------------------------------------------------------------
     //G4Box* MPPC = new G4Box("MPPC",trd_dxa/2,trd_dya/2,mppc_thick/2);
     G4Box* MPPC = new G4Box("MPPC",8*cm,8*cm,mppc_thick/2);
-    MPPCLW = new G4LogicalVolume(MPPC,Al,"MPPC");
+    //MPPCLW = new G4LogicalVolume(MPPC,Al,"MPPC");
+    MPPCLW = new G4LogicalVolume(MPPC,Epoxi,"MPPC");
     new G4PVPlacement(rotX,G4ThreeVector(0,Aeroy/2+air_thin+reflect_thick+trd_dz+mppc_thick/2,empty_part2_z/2),MPPCLW,"MPPC",logicWorld,false,0,checkOverlaps);
 
 
@@ -724,24 +743,25 @@ if(version==1){
 
 
   
-    G4OpticalSurface* surface_mppc = new G4OpticalSurface("surface_mppc");
-    surface_mppc->SetType(dielectric_metal);
-    surface_mppc->SetFinish(polished);    
-    surface_mppc->SetModel(unified);
-    G4MaterialPropertiesTable* sp_mppc = new G4MaterialPropertiesTable();
-    G4double mppc_reflec[]={0.0,0.0};
-    G4double mppc_ep1[] = {1.38*eV,1.43*eV,1.47*eV,1.51*eV,1.56*eV,1.61*eV,1.66*eV,1.7*eV,1.74*eV,1.79*eV,1.84*eV,1.88*eV,1.93*eV,1.97*eV,2*eV,2.06*eV,2.1*eV,2.15*eV,2.19*eV,2.24*eV,2.3*eV,2.33*eV,2.4*eV,2.47*eV,2.57*eV,2.7*eV,2.85*eV,2.96*eV,3.05*eV,3.15*eV,3.22*eV,3.28*eV,3.35*eV,3.41*eV,3.5*eV,3.57*eV,3.65*eV,3.67*eV,3.71*eV,3.73*eV,3.77*eV,3.79*eV,3.83*eV,3.9*eV};
-    G4double mppc_effi[] = {0.035,0.048,0.057,0.07,0.085,0.098,0.113,0.126,0.142,0.158,0.172,0.191,0.206,0.226,0.243,0.258,0.276,0.294,0.308,0.326,0.344,0.356,0.371,0.385,0.395,0.399,0.392,0.376,0.360,0.342,0.321,0.300,0.278,0.251,0.228,0.201,0.175,0.141,0.120,0.098,0.079,0.059,0.039,0.021};
+  G4OpticalSurface* surface_mppc = new G4OpticalSurface("surface_mppc");
+  //surface_mppc->SetType(dielectric_metal);
+  surface_mppc->SetType(dielectric_dielectric);
+  surface_mppc->SetFinish(polished);    
+  surface_mppc->SetModel(unified);
+  G4MaterialPropertiesTable* sp_mppc = new G4MaterialPropertiesTable();
+  G4double mppc_reflec[]={0.0,0.0};
+  G4double mppc_ep1[] = {1.38*eV,1.43*eV,1.47*eV,1.51*eV,1.56*eV,1.61*eV,1.66*eV,1.7*eV,1.74*eV,1.79*eV,1.84*eV,1.88*eV,1.93*eV,1.97*eV,2*eV,2.06*eV,2.1*eV,2.15*eV,2.19*eV,2.24*eV,2.3*eV,2.33*eV,2.4*eV,2.47*eV,2.57*eV,2.7*eV,2.85*eV,2.96*eV,3.05*eV,3.15*eV,3.22*eV,3.28*eV,3.35*eV,3.41*eV,3.5*eV,3.57*eV,3.65*eV,3.67*eV,3.71*eV,3.73*eV,3.77*eV,3.79*eV,3.83*eV,3.9*eV};
+  G4double mppc_effi[] = {0.035,0.048,0.057,0.07,0.085,0.098,0.113,0.126,0.142,0.158,0.172,0.191,0.206,0.226,0.243,0.258,0.276,0.294,0.308,0.326,0.344,0.356,0.371,0.385,0.395,0.399,0.392,0.376,0.360,0.342,0.321,0.300,0.278,0.251,0.228,0.201,0.175,0.141,0.120,0.098,0.079,0.059,0.039,0.021};
 
 
-    assert (sizeof(mppc_ep1) == sizeof(mppc_effi));
-    const G4int numentries_mppc = sizeof(mppc_ep1)/sizeof(G4double);
+  assert (sizeof(mppc_ep1) == sizeof(mppc_effi));
+  const G4int numentries_mppc = sizeof(mppc_ep1)/sizeof(G4double);
     
-    sp_mppc->AddProperty("REFLECTIVITY", mppc_ep, mppc_reflec,2);
-    sp_mppc->AddProperty("EFFICIENCY", mppc_ep1, mppc_effi,numentries_mppc)->SetSpline(true);
-    surface_mppc->SetMaterialPropertiesTable(sp_mppc);
+  sp_mppc->AddProperty("REFLECTIVITY", mppc_ep, mppc_reflec,2);
+  sp_mppc->AddProperty("EFFICIENCY", mppc_ep1, mppc_effi,numentries_mppc)->SetSpline(true);
+  surface_mppc->SetMaterialPropertiesTable(sp_mppc);
 
-    new G4LogicalSkinSurface("mppc_surface",MPPCLW,surface_mppc);
+  new G4LogicalSkinSurface("mppc_surface",MPPCLW,surface_mppc);
 
 
  

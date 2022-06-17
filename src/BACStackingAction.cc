@@ -8,6 +8,7 @@
 #include "G4ParticleTypes.hh"
 #include "G4Track.hh"
 #include "G4ios.hh"
+#include "G4ClassificationOfNewTrack.hh"
 
 int gCerenkovCounter;
 
@@ -27,6 +28,11 @@ BACStackingAction::~BACStackingAction()
 G4ClassificationOfNewTrack
 BACStackingAction::ClassifyNewTrack(const G4Track * aTrack)
 {
+
+  G4ClassificationOfNewTrack classification = fWaiting;
+  const G4double h = 6.628e-34;
+  const G4double c = 3.0e+8;
+  
   if(aTrack->GetDefinition() == G4OpticalPhoton::OpticalPhotonDefinition())
   { // particle is optical photon
     if(aTrack->GetParentID()>0)
@@ -34,14 +40,17 @@ BACStackingAction::ClassifyNewTrack(const G4Track * aTrack)
       if(aTrack->GetCreatorProcess()->GetProcessName() == "Scintillation")
         fScintillationCounter++;
       if(aTrack->GetCreatorProcess()->GetProcessName() == "Cerenkov"){
-        fCerenkovCounter++;
-	gCerenkovCounter++;
+	if(((h*c)/(aTrack->GetTotalEnergy()*1.6e-13))*(1e+9)>320&&((h*c)/(aTrack->GetTotalEnergy()*1.6e-13))*(1e+9)<900){
+	  fCerenkovCounter++;
+	  gCerenkovCounter++;
+	}
+	else return fKill;
       }
     }
   }
   /*
-  G4Track* tr = (G4Track*) aTrack;
-  G4String volume;
+    G4Track* tr = (G4Track*) aTrack;
+    G4String volume;
   
   
   G4ParticleDefinition* particle = aTrack->GetDefinition();
