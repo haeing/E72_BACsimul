@@ -95,11 +95,11 @@ void BACPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   //test------------------------------------
   /*
   G4double momentum = 0.735;
-  G4double energy_beam = (sqrt(mass_kaonm*mass_kaonm+momentum*momentum) - mass_kaonm )*GeV;
-  //G4double energy_beam = (sqrt(mass_pim*mass_pim+momentum*momentum) - mass_pim )*GeV;
+  //G4double energy_beam = (sqrt(mass_kaonm*mass_kaonm+momentum*momentum) - mass_kaonm )*GeV;
+  G4double energy_beam = (sqrt(mass_pim*mass_pim+momentum*momentum) - mass_pim )*GeV;
 
-  fParticleGun -> SetParticleDefinition (particleTable -> FindParticle("kaon-"));
-  //fParticleGun->SetParticleDefinition (particleTable -> FindParticle("pi-"));
+  //fParticleGun -> SetParticleDefinition (particleTable -> FindParticle("kaon-"));
+  fParticleGun->SetParticleDefinition (particleTable -> FindParticle("pi-"));
   fParticleGun->SetParticleMomentumDirection ( G4ThreeVector(0,0,1) );
 
   //fParticleGun->SetParticleTime ( 0.0 );
@@ -176,7 +176,7 @@ void BACPrimaryGeneratorAction::GenerateBeamKaonMBr(G4Event* anEvent, G4ThreeVec
 void BACPrimaryGeneratorAction::ReadBeamProfile( G4ThreeVector & X, G4ThreeVector & P )
 {
 
-  G4String beamfilename = "/home/cosmus/E72/BACSimul/param/beam/beam.k.run69_0130.root";
+  G4String beamfilename = "../param/beam/beam.k.run69_0130.root";
 
   TFile *beam_file = new TFile(beamfilename, "read");
 

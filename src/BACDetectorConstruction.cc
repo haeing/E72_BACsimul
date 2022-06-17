@@ -723,7 +723,7 @@ if(version==1){
   //G4OpticalSurface* surface_mppc = new G4OpticalSurface("surface_mppc",glisur, ground, dielectric_metal, polished);
 
 
-  /*
+  
     G4OpticalSurface* surface_mppc = new G4OpticalSurface("surface_mppc");
     surface_mppc->SetType(dielectric_metal);
     surface_mppc->SetFinish(polished);    
@@ -742,7 +742,7 @@ if(version==1){
     surface_mppc->SetMaterialPropertiesTable(sp_mppc);
 
     new G4LogicalSkinSurface("mppc_surface",MPPCLW,surface_mppc);
-  */
+
 
  
 
