@@ -219,7 +219,7 @@ G4VPhysicalVolume* BACDetectorConstruction::Construct()
   G4LogicalVolume* logicWorld = new G4LogicalVolume(solidWorld, world_mat, "World");
   G4VPhysicalVolume* physWorld = new G4PVPlacement(0,G4ThreeVector(), logicWorld, "World",0,false,0,checkOverlaps);
 
-if(version==1){
+  if(version==1){
     //Size-----------------------------------------------------------------------
     G4double Aerox = 125.0 *mm;
     G4double Aeroy = 125.0 *mm;
@@ -243,12 +243,12 @@ if(version==1){
 
     G4int numRZ = 33;
     /*
-    G4double trd_dxa = 1.2*cm;    //-z position x length
-    G4double trd_dxb = Aerox*0.5+air_thin;
-    G4double trd_dya = 1.2*cm;                        
-    G4double trd_dyb = empty_part2_z;                        
-    //G4double trd_dz  = (numRZ-2)*mm-reflect_thick;
-    G4double trd_dz  =10*cm;
+      G4double trd_dxa = 1.2*cm;    //-z position x length
+      G4double trd_dxb = Aerox*0.5+air_thin;
+      G4double trd_dya = 1.2*cm;                        
+      G4double trd_dyb = empty_part2_z;                        
+      //G4double trd_dz  = (numRZ-2)*mm-reflect_thick;
+      G4double trd_dz  =10*cm;
     */
 
     
@@ -283,7 +283,7 @@ if(version==1){
     //Part2---------------------------------------------------------------------------
     G4Box* part2_cover = new G4Box("part2_cover",Aerox/2+air_thin+reflect_thick,Aeroy/2+air_thin+reflect_thick+trd_dz/2,(empty_part2_z+reflect_thick)/2);
     //G4Trap *part2_hole1 = new G4Trap("part2_hole1",length_trap,height_trap,bottom_trap,top_trap);
-
+    /*
     G4int number = 0;
     G4double step_height[number];
     G4double step_bottom[number];
@@ -294,17 +294,16 @@ if(version==1){
       step_bottom[i] = -pow(step_height[i],2)*a2;
 
     }
+    */
 
 
 
 
-    std::vector<G4TwoVector> polygon(number+3);
+    std::vector<G4TwoVector> polygon(3);
     polygon[0].set(-0.5*bottom_trap,0.5*height_trap);
     polygon[1].set(-0.5*bottom_trap,-height_trap*0.5);
     polygon[2].set(0.5*bottom_trap,-height_trap*0.5);
-    for(int i=0;i<number;i++){
-      polygon[i+3].set(0.5*bottom_trap+step_bottom[i],-0.5*height_trap+step_height[i]);
-    }
+    //polygon[3].set(-0.5*bottom_trap+top_trap,0.5*hegith_trap);
 
     G4TwoVector offsetA(0.,0.), offsetB(0.,0.);
     G4double scaleA=1., scaleB=1.;
@@ -367,12 +366,12 @@ if(version==1){
     G4SubtractionSolid* Part2 = new G4SubtractionSolid("Part2",part2_cover_second,trd_hole,rotX,G4ThreeVector(0,Aeroy/2+air_thin+reflect_thick/2,-reflect_thick*0.5));
 
     /*
-    G4SubtractionSolid* Part2_1 = new G4SubtractionSolid("Part2_1",part2_cover_second,poly,rotX,G4ThreeVector(-Aerox/3-air_thin*4/3,Aeroy/2+air_thin+reflect_thick/2+numRZ*mm*0.5,-(empty_part2_z+reflect_thick)*0.25));
-    G4SubtractionSolid* Part2_2 = new G4SubtractionSolid("Part2_2",Part2_1,poly,rotX,G4ThreeVector(0,Aeroy/2+air_thin+reflect_thick/2+numRZ*mm*0.5,-(empty_part2_z+reflect_thick)*0.25));
-    G4SubtractionSolid* Part2_3 = new G4SubtractionSolid("Part2_3",Part2_2,poly,rotX,G4ThreeVector(Aerox/3+air_thin*4/3,Aeroy/2+air_thin+reflect_thick/2+numRZ*mm*0.5,-(reflect_thick+empty_part2_z)*0.25));
-    G4SubtractionSolid* Part2_4 = new G4SubtractionSolid("Part2_4",Part2_3,poly,rotX,G4ThreeVector(-Aerox/3-air_thin*4/3,Aeroy/2+air_thin+reflect_thick/2+numRZ*mm*0.5,(reflect_thick+empty_part2_z)*0.25));
-    G4SubtractionSolid* Part2_5 = new G4SubtractionSolid("Part2_5",Part2_4,poly,rotX,G4ThreeVector(0,Aeroy/2+air_thin+reflect_thick/2+numRZ*mm*0.5,(empty_part2_z+reflect_thick)*0.25));
-    G4SubtractionSolid* Part2 = new G4SubtractionSolid("Part2",Part2_5,poly,rotX,G4ThreeVector(Aerox/3+air_thin*4/3,Aeroy/2+air_thin+reflect_thick/2+numRZ*mm*0.5,(empty_part2_z+reflect_thick)*0.25));
+      G4SubtractionSolid* Part2_1 = new G4SubtractionSolid("Part2_1",part2_cover_second,poly,rotX,G4ThreeVector(-Aerox/3-air_thin*4/3,Aeroy/2+air_thin+reflect_thick/2+numRZ*mm*0.5,-(empty_part2_z+reflect_thick)*0.25));
+      G4SubtractionSolid* Part2_2 = new G4SubtractionSolid("Part2_2",Part2_1,poly,rotX,G4ThreeVector(0,Aeroy/2+air_thin+reflect_thick/2+numRZ*mm*0.5,-(empty_part2_z+reflect_thick)*0.25));
+      G4SubtractionSolid* Part2_3 = new G4SubtractionSolid("Part2_3",Part2_2,poly,rotX,G4ThreeVector(Aerox/3+air_thin*4/3,Aeroy/2+air_thin+reflect_thick/2+numRZ*mm*0.5,-(reflect_thick+empty_part2_z)*0.25));
+      G4SubtractionSolid* Part2_4 = new G4SubtractionSolid("Part2_4",Part2_3,poly,rotX,G4ThreeVector(-Aerox/3-air_thin*4/3,Aeroy/2+air_thin+reflect_thick/2+numRZ*mm*0.5,(reflect_thick+empty_part2_z)*0.25));
+      G4SubtractionSolid* Part2_5 = new G4SubtractionSolid("Part2_5",Part2_4,poly,rotX,G4ThreeVector(0,Aeroy/2+air_thin+reflect_thick/2+numRZ*mm*0.5,(empty_part2_z+reflect_thick)*0.25));
+      G4SubtractionSolid* Part2 = new G4SubtractionSolid("Part2",Part2_5,poly,rotX,G4ThreeVector(Aerox/3+air_thin*4/3,Aeroy/2+air_thin+reflect_thick/2+numRZ*mm*0.5,(empty_part2_z+reflect_thick)*0.25));
     */
     //G4SubtractionSolid* Part2_1 = new G4SubtractionSolid("Part2_1",part2_cover_second,poly,rotX,G4ThreeVector(-Aerox*0.5/3-air_thin/3,Aeroy/2+air_thin+reflect_thick/2+numRZ*mm*0.5,-reflect_thick*0.25));
 
@@ -400,6 +399,7 @@ if(version==1){
     
 
   }
+
 
   if(version==2){
   //Size-----------------------------------------------------------------------
@@ -653,6 +653,178 @@ if(version==1){
 
   }
 
+  if(version==3){
+    //Size-----------------------------------------------------------------------
+    G4double Aerox = 125.0 *mm;
+    G4double Aeroy = 125.0 *mm;
+    G4double Aeroz = 12.0 *mm*num_aero_i;
+
+    G4double reflect_thick = 0.3*mm;
+    //G4double reflect_thick = 0.5*cm;
+    G4double mppc_thick = 1*mm;
+    G4double air_thin = 0.2*mm;
+    //G4double air_thin = 1*cm;
+    //G4double empty_part1_z = 12.0*num_aero_i*mm;
+    G4double empty_part1_z = 0;
+    G4double empty_part2_z = reflect_part_length_d*mm;
+    //G4double empty_part2_z = Aeroy+air_thin*2;
+
+    //original
+    G4double trd_dxa = 2.4*cm;    //-z position x length
+    G4double trd_dxb = Aerox*0.5+air_thin;
+    G4double trd_dya = 2.4*cm;                        
+    G4double trd_dyb = empty_part2_z;                        
+    G4double trd_dz  = light_guide_length_d*mm;
+
+
+    G4int numRZ = 33;
+    /*
+    G4double trd_dxa = 1.2*cm;    //-z position x length
+    G4double trd_dxb = Aerox*0.5+air_thin;
+    G4double trd_dya = 1.2*cm;                        
+    G4double trd_dyb = empty_part2_z;                        
+    //G4double trd_dz  = (numRZ-2)*mm-reflect_thick;
+    G4double trd_dz  =10*cm;
+    */
+
+    
+    G4double top_trap =12.0*mm*num_aero_i;
+    G4double bottom_trap = empty_part2_z;
+    G4double height_trap = Aeroy+air_thin*2;
+    G4double length_trap = Aerox+air_thin*2;
+
+    
+
+
+    //Trapezoid position correction
+    //G4double alpha = 0.5*(top_trap-bottom_trap)/height_trap;
+    //G4double move = 0.5*height_trap*TMath::Tan(alpha);
+    
+    
+
+    //Part1-----------------------------------------------------------------------------
+    G4Box* part1_cover = new G4Box("part1_cover",Aerox/2+air_thin+reflect_thick,Aeroy/2+air_thin+reflect_thick,(empty_part1_z+air_thin+reflect_thick)/2);
+    G4Box* part1_hole = new G4Box("part1_hole",Aerox/2+air_thin,Aeroy/2+air_thin,(empty_part1_z+air_thin)/2);
+    G4SubtractionSolid* Part1 = new G4SubtractionSolid("Part1",part1_cover,part1_hole,0,G4ThreeVector(0,0,+reflect_thick/2));
+
+    Part1LW = new G4LogicalVolume(Part1,Mylar,"Part1");
+    new G4PVPlacement(0,G4ThreeVector(0,0,-(empty_part1_z+air_thin+reflect_thick)/2),Part1LW,"Part1",logicWorld,false,0,checkOverlaps);
+    
+
+    //Part2 - Aerogel-------------------------------------------------------------------
+    G4Box* Aero = new G4Box("Aero",Aerox/2,Aeroy/2,Aeroz/2);
+    AeroLW = new G4LogicalVolume(Aero,Aerogel,"Aero");
+    new G4PVPlacement(0,G4ThreeVector(0,0,Aeroz/2),AeroLW,"Aero",logicWorld,false,0,checkOverlaps);
+
+
+
+    //Part2---------------------------------------------------------------------------
+    G4Box* part2_cover = new G4Box("part2_cover",Aerox/2+air_thin+reflect_thick,Aeroy/2+air_thin+reflect_thick+trd_dz/2,(empty_part2_z+reflect_thick)/2);
+    //G4Trap *part2_hole1 = new G4Trap("part2_hole1",length_trap,height_trap,bottom_trap,top_trap);
+
+    /*
+    G4double step_height[number];
+    G4double step_bottom[number];
+
+    G4double a2 = bottom_trap/pow(height_trap,2);
+    for(int i=0;i<number;i++){
+      step_height[i] = height_trap/(number+1)*(i+1);
+      step_bottom[i] = -pow(step_height[i],2)*a2;
+
+    }
+    */
+
+
+
+
+    std::vector<G4TwoVector> polygon(4);
+    polygon[0].set(-0.5*bottom_trap,0.5*height_trap);
+    polygon[1].set(-0.5*bottom_trap,-height_trap*0.5);
+    polygon[2].set(0.5*bottom_trap,-height_trap*0.5);
+    polygon[3].set(-0.5*bottom_trap+top_trap,0.5*height_trap);
+
+
+    G4TwoVector offsetA(0.,0.), offsetB(0.,0.);
+    G4double scaleA=1., scaleB=1.;
+    //G4ExtrudedSolid* test = new G4ExtrudedSolid("test",polygon,length_trap/2,offsetA,scaleA, offsetB, scaleB);
+    G4ExtrudedSolid* part2_hole1 = new G4ExtrudedSolid("part2_hole1",polygon,length_trap/2,offsetA,scaleA, offsetB, scaleB);
+    //auto testLW = new G4LogicalVolume(test,Aerogel,"test");
+    //new G4PVPlacement(0,G4ThreeVector(20*cm, 20*cm, 20*cm),testLW,"test",logicWorld,false,0,checkOverlaps);
+
+
+
+    G4double anx = 0;
+    G4double any = -90*degree;
+    G4double anz = 180*degree;
+    
+    G4double sina = TMath::Sin(anx);
+    G4double cosa = TMath::Cos(anx);
+    G4double sinb = TMath::Sin(any);
+    G4double cosb = TMath::Cos(any);
+    G4double sinc = TMath::Sin(anz);
+    G4double cosc = TMath::Cos(anz);
+    G4RotationMatrix *rot = new G4RotationMatrix(G4ThreeVector(cosb*cosc,sina*sinb*cosc-cosa*sinc,cosa*sinb*cosc+sina*sinc),
+						 G4ThreeVector(cosb*sinc,sina*sinb*sinc+cosa*cosc,cosa*sinb*sinc-sina*cosc),
+						 G4ThreeVector(-sinb,sina*sinb,cosa*cosb));
+    G4SubtractionSolid* part2_cover_second = new G4SubtractionSolid("part2_cover_second",part2_cover,part2_hole1,rot,G4ThreeVector(0,-trd_dz/2,-reflect_thick*0.5));
+    G4RotationMatrix *rotY = new G4RotationMatrix();
+    rotY->rotateY(90*degree);
+    //G4SubtractionSolid* part2_cover_second = new G4SubtractionSolid("part2_cover_second",part2_cover,part2_hole1,rotY,G4ThreeVector(0,-trd_dz/2,-(empty_part2_z+reflect_thick)/2));
+
+    //test winstone
+
+
+    G4double r[numRZ];
+    G4double z[numRZ];
+    G4double r_in[numRZ];
+
+    for(int i=0;i<numRZ;i++){
+      z[i] = i*mm;
+      r_in[i] = 0*mm;
+    }
+    r[0] = 6*mm;
+    for(int i=0;i<numRZ;i++){
+      G4double x = r[i-1];
+      while(fabs(f(x,z[i]))>0.1){
+	x+=0.0001;
+      }
+      r[i] = x;
+    }
+
+
+    G4VSolid* poly = new G4Polycone("poly",0.*deg, 360.*deg, numRZ,z, r_in,r);
+    //auto* polyLW = new G4LogicalVolume(poly,world_mat,"poly");
+    
+    //new G4PVPlacement(rotX,G4ThreeVector(20*cm,20*cm,20*cm),polyLW,"poly",logicWorld,false,0,checkOverlaps);
+    
+
+
+
+    G4Trd* trd_hole =   new G4Trd("trd_hole",0.5*trd_dxa, 0.5*trd_dxb,0.5*trd_dya, 0.5*trd_dyb, 0.5*(trd_dz+reflect_thick));
+    G4RotationMatrix *rotX = new G4RotationMatrix();
+    rotX->rotateX(270*degree);
+
+    G4SubtractionSolid* Part2_1 = new G4SubtractionSolid("Part2",part2_cover_second,trd_hole,rotX,G4ThreeVector(-Aerox*0.25-air_thin*0.5,Aeroy/2+air_thin+reflect_thick/2,-reflect_thick*0.5));
+  G4SubtractionSolid* Part2 = new G4SubtractionSolid("Part2",Part2_1,trd_hole,rotX,G4ThreeVector(Aerox*0.25+air_thin*0.5,Aeroy/2+air_thin+reflect_thick/2,-reflect_thick*0.5));
+
+
+
+    Part2LW = new G4LogicalVolume(Part2,Mylar,"Part2");
+    new G4PVPlacement(0,G4ThreeVector(0,trd_dz/2,(empty_part2_z+reflect_thick)/2),Part2LW,"Part2",logicWorld,false,1,checkOverlaps);
+    
+
+    //MPPC---------------------------------------------------------------------------
+    G4Box* MPPC = new G4Box("MPPC",8*cm,8*cm,mppc_thick/2);
+    //MPPCLW = new G4LogicalVolume(MPPC,Al,"MPPC");
+    MPPCLW = new G4LogicalVolume(MPPC,Epoxi,"MPPC");
+    new G4PVPlacement(rotX,G4ThreeVector(0,Aeroy/2+air_thin+reflect_thick+trd_dz+mppc_thick/2,empty_part2_z/2),MPPCLW,"MPPC",logicWorld,false,0,checkOverlaps);
+
+
+
+    
+
+  }
+
 
     
 
@@ -742,7 +914,7 @@ if(version==1){
   //G4OpticalSurface* surface_mppc = new G4OpticalSurface("surface_mppc",glisur, ground, dielectric_metal, polished);
 
 
-  
+  /*
   G4OpticalSurface* surface_mppc = new G4OpticalSurface("surface_mppc");
   //surface_mppc->SetType(dielectric_metal);
   surface_mppc->SetType(dielectric_dielectric);
@@ -750,18 +922,22 @@ if(version==1){
   surface_mppc->SetModel(unified);
   G4MaterialPropertiesTable* sp_mppc = new G4MaterialPropertiesTable();
   G4double mppc_reflec[]={0.0,0.0};
-  G4double mppc_ep1[] = {1.38*eV,1.43*eV,1.47*eV,1.51*eV,1.56*eV,1.61*eV,1.66*eV,1.7*eV,1.74*eV,1.79*eV,1.84*eV,1.88*eV,1.93*eV,1.97*eV,2*eV,2.06*eV,2.1*eV,2.15*eV,2.19*eV,2.24*eV,2.3*eV,2.33*eV,2.4*eV,2.47*eV,2.57*eV,2.7*eV,2.85*eV,2.96*eV,3.05*eV,3.15*eV,3.22*eV,3.28*eV,3.35*eV,3.41*eV,3.5*eV,3.57*eV,3.65*eV,3.67*eV,3.71*eV,3.73*eV,3.77*eV,3.79*eV,3.83*eV,3.9*eV};
-  G4double mppc_effi[] = {0.035,0.048,0.057,0.07,0.085,0.098,0.113,0.126,0.142,0.158,0.172,0.191,0.206,0.226,0.243,0.258,0.276,0.294,0.308,0.326,0.344,0.356,0.371,0.385,0.395,0.399,0.392,0.376,0.360,0.342,0.321,0.300,0.278,0.251,0.228,0.201,0.175,0.141,0.120,0.098,0.079,0.059,0.039,0.021};
+  G4double mppc_effi[]={1.0,1.0};
+  
+  //G4double mppc_ep1[] = {1.38*eV,1.43*eV,1.47*eV,1.51*eV,1.56*eV,1.61*eV,1.66*eV,1.7*eV,1.74*eV,1.79*eV,1.84*eV,1.88*eV,1.93*eV,1.97*eV,2*eV,2.06*eV,2.1*eV,2.15*eV,2.19*eV,2.24*eV,2.3*eV,2.33*eV,2.4*eV,2.47*eV,2.57*eV,2.7*eV,2.85*eV,2.96*eV,3.05*eV,3.15*eV,3.22*eV,3.28*eV,3.35*eV,3.41*eV,3.5*eV,3.57*eV,3.65*eV,3.67*eV,3.71*eV,3.73*eV,3.77*eV,3.79*eV,3.83*eV,3.9*eV};
+  //G4double mppc_effi[] = {0.035,0.048,0.057,0.07,0.085,0.098,0.113,0.126,0.142,0.158,0.172,0.191,0.206,0.226,0.243,0.258,0.276,0.294,0.308,0.326,0.344,0.356,0.371,0.385,0.395,0.399,0.392,0.376,0.360,0.342,0.321,0.300,0.278,0.251,0.228,0.201,0.175,0.141,0.120,0.098,0.079,0.059,0.039,0.021};
 
 
-  assert (sizeof(mppc_ep1) == sizeof(mppc_effi));
-  const G4int numentries_mppc = sizeof(mppc_ep1)/sizeof(G4double);
+
+  //assert (sizeof(mppc_ep1) == sizeof(mppc_effi));
+  //const G4int numentries_mppc = sizeof(mppc_ep1)/sizeof(G4double);
     
   sp_mppc->AddProperty("REFLECTIVITY", mppc_ep, mppc_reflec,2);
-  sp_mppc->AddProperty("EFFICIENCY", mppc_ep1, mppc_effi,numentries_mppc)->SetSpline(true);
+  sp_mppc->AddProperty("EFFICIENCY", mppc_ep, mppc_effi,2);
   surface_mppc->SetMaterialPropertiesTable(sp_mppc);
 
   new G4LogicalSkinSurface("mppc_surface",MPPCLW,surface_mppc);
+  */  
 
 
  

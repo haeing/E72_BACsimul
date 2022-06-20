@@ -49,6 +49,8 @@ public:
   void ClearPhotonCount() {fPhotons=0.0;}
 
 
+
+
   //void SetPos(G4ThreeVector xyz) {fPos = xyz;}
   //G4ThreeVector GetPos() const {return fPos;}
   
@@ -62,6 +64,7 @@ private:
   //G4double fTime;
   G4double fPhotons;
   //G4ThreeVector fPos;
+
 };
 
 inline MPPCHit::MPPCHit(const MPPCHit& right)
