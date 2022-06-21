@@ -70,8 +70,8 @@ int main(int argc,char** argv)
     {
       histname = "geant4_test.root";
       num_aerogel = "2";
-      reflect_part_length = "80.0";
-      light_guide_length= "50.0";
+      reflect_part_length = "110.0";
+      light_guide_length= "110.0";
     }
   
 

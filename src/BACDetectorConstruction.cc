@@ -656,8 +656,12 @@ G4VPhysicalVolume* BACDetectorConstruction::Construct()
   if(version==3){
     //Size-----------------------------------------------------------------------
     G4double Aerox = 125.0 *mm;
-    G4double Aeroy = 125.0 *mm;
+    G4double Aeroy = 125.0 *mm+20*mm;
     G4double Aeroz = 12.0 *mm*num_aero_i;
+
+    G4double Aerox_real = 125.0 *mm;
+    G4double Aeroy_real = 125.0 *mm;
+    G4double Aeroz_real = 12.0 *mm*num_aero_i;
 
     G4double reflect_thick = 0.3*mm;
     //G4double reflect_thick = 0.5*cm;
@@ -712,9 +716,9 @@ G4VPhysicalVolume* BACDetectorConstruction::Construct()
     
 
     //Part2 - Aerogel-------------------------------------------------------------------
-    G4Box* Aero = new G4Box("Aero",Aerox/2,Aeroy/2,Aeroz/2);
+    G4Box* Aero = new G4Box("Aero",Aerox_real/2,Aeroy_real/2,Aeroz_real/2);
     AeroLW = new G4LogicalVolume(Aero,Aerogel,"Aero");
-    new G4PVPlacement(0,G4ThreeVector(0,0,Aeroz/2),AeroLW,"Aero",logicWorld,false,0,checkOverlaps);
+    new G4PVPlacement(0,G4ThreeVector(0,-10*mm,Aeroz_real/2),AeroLW,"Aero",logicWorld,false,0,checkOverlaps);
 
 
 
@@ -799,8 +803,9 @@ G4VPhysicalVolume* BACDetectorConstruction::Construct()
     
 
 
-
+    //original!! 220621
     G4Trd* trd_hole =   new G4Trd("trd_hole",0.5*trd_dxa, 0.5*trd_dxb,0.5*trd_dya, 0.5*trd_dyb, 0.5*(trd_dz+reflect_thick));
+    
     G4RotationMatrix *rotX = new G4RotationMatrix();
     rotX->rotateX(270*degree);
 
