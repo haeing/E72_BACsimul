@@ -55,6 +55,7 @@ private:
   
 
   int nhMppc;
+  //int mppcmulti;
   int mppcpid[num_mppchit];
   double mppctime[num_mppchit];
   double mppcposx[num_mppchit];

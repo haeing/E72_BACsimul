@@ -68,7 +68,7 @@ void BACPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   G4double x = beam_size*0.5-G4UniformRand()*beam_size*mm;
   //original 220621
   //G4double y = beam_size*0.5-G4UniformRand()*beam_size*mm;
-  G4double y = beam_size*0.5-G4UniformRand()*beam_size*mm-10*mm;
+  G4double y = beam_size*0.5-G4UniformRand()*beam_size*mm;
   fParticleGun->SetParticlePosition(G4ThreeVector(x,y,-10*cm) );
   //fParticleGun->SetParticlePosition(G4ThreeVector(0,0,-10*cm) );
   fParticleGun->SetParticleEnergy(energy);

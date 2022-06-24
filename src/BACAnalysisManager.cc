@@ -75,6 +75,7 @@ void BACAnalysisManager::BeginOfRun(const G4Run*)
   
   //MPPC
   tree->Branch("nhMppc",&nhMppc,"nhMppc/I");
+  //tree->Branch("mppcmulti"&mppcmulti,"mppcmulti/I");
   tree->Branch("mppcpid",mppcpid,"mppcpid[nhMppc]/I");
   tree->Branch("mppcposx",mppcposx,"mppcposx[nhMppc]/D");
   tree->Branch("mppcposy",mppcposy,"mppcposy[nhMppc]/D");
@@ -109,6 +110,7 @@ void BACAnalysisManager::EndOfEvent(const G4Event* anEvent)
 
   G4int nhmppc = 0;
   G4int nhaero = 0;
+  G4int multiplicity = 0;
 
   G4int pdg = anEvent->GetPrimaryVertex(0)->GetPrimary(0)->GetPDGcode();
   evtpid = pdg;
@@ -145,6 +147,7 @@ void BACAnalysisManager::EndOfEvent(const G4Event* anEvent)
       mppcposz[i] = aHit->GetPosition().z();
       mppcpid[i] = aHit->GetParticleID();
       mppcwavelength[i] = aHit->GetWavelength();
+      
     }
   nhMppc = nhmppc;
 

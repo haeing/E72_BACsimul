@@ -655,7 +655,7 @@ G4VPhysicalVolume* BACDetectorConstruction::Construct()
 
   if(version==3){
     //Size-----------------------------------------------------------------------
-    G4double Aerox = 125.0 *mm;
+    G4double Aerox = 125.0 *mm+20*mm;
     G4double Aeroy = 125.0 *mm+20*mm;
     G4double Aeroz = 12.0 *mm*num_aero_i;
 
@@ -718,7 +718,7 @@ G4VPhysicalVolume* BACDetectorConstruction::Construct()
     //Part2 - Aerogel-------------------------------------------------------------------
     G4Box* Aero = new G4Box("Aero",Aerox_real/2,Aeroy_real/2,Aeroz_real/2);
     AeroLW = new G4LogicalVolume(Aero,Aerogel,"Aero");
-    new G4PVPlacement(0,G4ThreeVector(0,-10*mm,Aeroz_real/2),AeroLW,"Aero",logicWorld,false,0,checkOverlaps);
+    new G4PVPlacement(0,G4ThreeVector(0,0*mm,Aeroz_real/2),AeroLW,"Aero",logicWorld,false,0,checkOverlaps);
 
 
 

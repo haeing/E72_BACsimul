@@ -69,7 +69,7 @@ int main(int argc,char** argv)
   else
     {
       histname = "geant4_test.root";
-      num_aerogel = "2";
+      num_aerogel = "3";
       reflect_part_length = "110.0";
       light_guide_length= "110.0";
     }
