@@ -60,18 +60,21 @@ int main(int argc,char** argv)
   G4String num_aerogel;
   G4String reflect_part_length;
   G4String light_guide_length;
+  G4String middle_length;
   if(argc>=3){
     histname = argv[2];
     num_aerogel = argv[3];
     reflect_part_length = argv[4];
     light_guide_length = argv[5];
+    middle_length = argv[6];
   }
   else
     {
       histname = "geant4_test.root";
       num_aerogel = "3";
-      reflect_part_length = "110.0";
-      light_guide_length= "110.0";
+      reflect_part_length = "170.0";
+      light_guide_length= "70.0";
+      middle_length = "20.0";
     }
   
 
@@ -88,7 +91,7 @@ int main(int argc,char** argv)
   // Set mandatory initialization classes
   //
   // Detector construction
-  runManager->SetUserInitialization(new BACDetectorConstruction(num_aerogel,reflect_part_length,light_guide_length));
+  runManager->SetUserInitialization(new BACDetectorConstruction(num_aerogel,reflect_part_length,light_guide_length,middle_length));
   
 
   // Physics list

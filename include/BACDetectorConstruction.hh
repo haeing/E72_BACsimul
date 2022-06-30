@@ -14,7 +14,7 @@ class G4VisAttributes;
 class BACDetectorConstruction : public G4VUserDetectorConstruction
 {
 public:
-  BACDetectorConstruction(const G4String &num_aerogel, const G4String &reflec, const G4String &light);
+  BACDetectorConstruction(const G4String &num_aerogel, const G4String &reflec, const G4String &light, const G4String &middle);
   virtual ~BACDetectorConstruction();
 
   virtual void ConstructSDandField();
@@ -43,6 +43,7 @@ private:
   G4String num_aero;
   G4String reflect_part_length;
   G4String light_guide_length;
+  G4String middle_length;
 
   
 };

@@ -52,7 +52,8 @@ void BACPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   //homogeneous test------------------------------------
   
   G4double momentum = 0.735;
-  G4double beam_size = 125; 
+  G4double beam_size = 125;
+  G4double tight_size = 30; 
 
   if(particle=="kaon"){
     energy = (sqrt(mass_kaonm*mass_kaonm+momentum*momentum) - mass_kaonm )*GeV;
@@ -62,13 +63,20 @@ void BACPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
     energy = (sqrt(mass_pim*mass_pim+momentum*momentum) - mass_pim )*GeV;
     fParticleGun->SetParticleDefinition (particleTable -> FindParticle("pi-"));
   }
+  if(particle=="muon"){
+    energy = 4*GeV;
+    fParticleGun->SetParticleDefinition (particleTable -> FindParticle("mu-"));
+  }
+    
   
   fParticleGun->SetParticleMomentumDirection ( G4ThreeVector(0,0,1) );
 
   G4double x = beam_size*0.5-G4UniformRand()*beam_size*mm;
+  //G4double x = tight_size*0.5-G4UniformRand()*tight_size*mm;
   //original 220621
   //G4double y = beam_size*0.5-G4UniformRand()*beam_size*mm;
   G4double y = beam_size*0.5-G4UniformRand()*beam_size*mm;
+  //G4double y = tight_size*0.5-G4UniformRand()*tight_size*mm;
   fParticleGun->SetParticlePosition(G4ThreeVector(x,y,-10*cm) );
   //fParticleGun->SetParticlePosition(G4ThreeVector(0,0,-10*cm) );
   fParticleGun->SetParticleEnergy(energy);
