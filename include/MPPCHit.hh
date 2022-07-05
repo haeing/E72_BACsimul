@@ -15,7 +15,7 @@ class MPPCHit : public G4VHit
 public:
   MPPCHit();
   MPPCHit(G4ThreeVector& axyz, G4double t);
-  MPPCHit(G4ThreeVector& axyz, G4double t, G4int pid, G4double Wavelength);
+  MPPCHit(G4ThreeVector& axyz, G4ThreeVector& wxyz, G4double t, G4int pid, G4double Wavelength);
   virtual ~MPPCHit();
 
   //copy constructor & assignment operator
@@ -33,6 +33,7 @@ public:
   */
 
   const G4ThreeVector& GetPosition() const { return xyz; }
+  const G4ThreeVector& GetWorldPosition() const { return worldxyz; }
   G4double GetTOF() const { return tof; }
   //void SetEdep(G4double de) {fEdep = de;}
   //void AddEdep(G4double de) {fEdep += de;}
@@ -56,6 +57,7 @@ public:
   
 private:
   G4ThreeVector xyz;
+  G4ThreeVector worldxyz;
   G4double tof;
   //G4int fId;
   G4int particleID;
@@ -71,6 +73,7 @@ inline MPPCHit::MPPCHit(const MPPCHit& right)
   : G4VHit()
 {
   xyz = right.xyz;
+  worldxyz = right.worldxyz;
   tof = right.tof;
   wavelengthMP = right.wavelengthMP;
 }
@@ -79,6 +82,7 @@ inline const MPPCHit& MPPCHit::operator=
 (const MPPCHit& right)
 {
   xyz = right.xyz;
+  worldxyz = right.worldxyz;
   tof = right.tof;
   wavelengthMP = right.wavelengthMP;
   return *this;
