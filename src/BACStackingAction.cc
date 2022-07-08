@@ -40,7 +40,7 @@ BACStackingAction::ClassifyNewTrack(const G4Track * aTrack)
       if(aTrack->GetCreatorProcess()->GetProcessName() == "Scintillation")
         fScintillationCounter++;
       if(aTrack->GetCreatorProcess()->GetProcessName() == "Cerenkov"){
-	if(((h*c)/(aTrack->GetTotalEnergy()*1.6e-13))*(1e+9)>320&&((h*c)/(aTrack->GetTotalEnergy()*1.6e-13))*(1e+9)<900){
+	if(((h*c)/(aTrack->GetTotalEnergy()*1.6e-13))*(1e+9)>320/*&&((h*c)/(aTrack->GetTotalEnergy()*1.6e-13))*(1e+9)<900*/){
 	  fCerenkovCounter++;
 	  gCerenkovCounter++;
 	}
