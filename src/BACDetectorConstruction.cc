@@ -110,7 +110,7 @@ G4VPhysicalVolume* BACDetectorConstruction::Construct()
 
    
   G4MaterialPropertiesTable* prop_air = new G4MaterialPropertiesTable();
-  G4double air_ep[] = {1.6*eV,7.*eV};
+  G4double air_ep[] = {1.3*eV,7.*eV};
   G4double air_rindex[] = {1.0,1.0};
   prop_air->AddProperty("RINDEX",air_ep,air_rindex,2)->SetSpline(true);
   world_mat->SetMaterialPropertiesTable(prop_air);
@@ -121,7 +121,7 @@ G4VPhysicalVolume* BACDetectorConstruction::Construct()
 
   
 
-  G4double aerogel_ep[] = {1.6*eV,7.*eV};
+  G4double aerogel_ep[] = {1.3*eV,7.*eV};
   G4double aerogel_abs[] = {15*mm,15*mm};
   //G4double aerogel_abs[] = {50*cm,50*cm};
   G4double aerogel_rindex[]={1.10,1.10};
@@ -148,7 +148,7 @@ G4VPhysicalVolume* BACDetectorConstruction::Construct()
   //Black sheet property-------------------------------------------------
   G4MaterialPropertiesTable* prop_bs = new G4MaterialPropertiesTable();
 
-  G4double bs_ep[] = {1.6*eV,7.*eV};
+  G4double bs_ep[] = {1.3*eV,7.*eV};
   G4double bs_abs[] = {1.0e-9*cm,1.0e-9*cm};
   G4double bs_rindex[]={1.6,1.6};
   
@@ -163,7 +163,7 @@ G4VPhysicalVolume* BACDetectorConstruction::Construct()
   G4double mylar_real[]={2.2802,2.6945,2.7668,2.7675,2.6154,2.1606,1.8301,1.5724,1.366,1.0728,0.8734,0.7278,0.6079,0.52135,0.39877,0.31474,0.28003,0.18137,0.12677,0.094236};
   G4double mylar_ima[]={8.1134,8.1878,8.2573,8.3866,8.4914,8.3565,8.0601,7.7354,7.4052,6.7839,6.2418,5.7781,5.3676,5.0008,4.3957,3.9165,3.7081,2.9029,2.3563,1.9519};
 
-  G4double mylar_ep1[] = {1.6*eV,7.*eV};
+  G4double mylar_ep1[] = {1.3*eV,7.*eV};
 
   assert (sizeof(mylar_ep) == sizeof(mylar_real));
   assert (sizeof(mylar_ep) == sizeof(mylar_ima));
@@ -203,7 +203,7 @@ G4VPhysicalVolume* BACDetectorConstruction::Construct()
   G4MaterialPropertiesTable* prop_epoxi = new G4MaterialPropertiesTable();
  
   G4double epoxi_rindex[2]={1.5,1.5};
-  G4double epoxi_ep[] = {1.6*eV,7.*eV};
+  G4double epoxi_ep[] = {1.3*eV,7.*eV};
   G4double epoxi_abs[] = {1.0*cm,1.0*cm};
 
 
@@ -242,10 +242,10 @@ G4VPhysicalVolume* BACDetectorConstruction::Construct()
   //G4double empty_part2_z = Aeroy+air_thin*2;
 
   //original
-  G4double trd_dxa = 2.4*cm;    //-z position x length
-  //G4double trd_dxa = 4.8*cm;    //-z position x length
-  G4double trd_dxb = Aerox*0.5+air_thin;
-  //G4double trd_dxb = Aerox+air_thin*2;
+  //G4double trd_dxa = 2.4*cm;    //-z position x length
+  G4double trd_dxa = 4.8*cm;    //-z position x length
+  //G4double trd_dxb = Aerox*0.5+air_thin;
+  G4double trd_dxb = Aerox+air_thin*2;
   G4double trd_dya = 2.4*cm;
   G4double trd_dyb = empty_part2_z;                        
   G4double trd_dz  = light_guide_length_d*mm;
@@ -331,6 +331,7 @@ G4VPhysicalVolume* BACDetectorConstruction::Construct()
 
 
   //Two MPPC per each side
+  /*
   //light guide bottom part
   G4SubtractionSolid* Part2_1 = new G4SubtractionSolid("Part2",part2_cover_second,trd_hole,rotX90,G4ThreeVector(-Aerox*0.25-air_thin*0.5,-(Aeroy/2+air_thin+reflect_thick/2+trd_dz/2),-reflect_thick*0.5));
   G4SubtractionSolid* Part2_2 = new G4SubtractionSolid("Part2",Part2_1,trd_hole,rotX90,G4ThreeVector(Aerox*0.25+air_thin*0.5,-(Aeroy/2+air_thin+reflect_thick/2+trd_dz/2),-reflect_thick*0.5));
@@ -338,13 +339,13 @@ G4VPhysicalVolume* BACDetectorConstruction::Construct()
   //light guide top part
   G4SubtractionSolid* Part2_3 = new G4SubtractionSolid("Part2",Part2_2,trd_hole,rotX,G4ThreeVector(-Aerox*0.25-air_thin*0.5,Aeroy/2+air_thin+reflect_thick/2+trd_dz/2,-reflect_thick*0.5));
   G4SubtractionSolid* Part2 = new G4SubtractionSolid("Part2",Part2_3,trd_hole,rotX,G4ThreeVector(Aerox*0.25+air_thin*0.5,Aeroy/2+air_thin+reflect_thick/2+trd_dz/2,-reflect_thick*0.5));
-
+  */
   
   //One MPPC per each side
-  /*
+  
     G4SubtractionSolid* Part2_1 = new G4SubtractionSolid("Part2",part2_cover_second,trd_hole,rotX90,G4ThreeVector(0,-(Aeroy/2+air_thin+reflect_thick/2+trd_dz/2),-reflect_thick*0.5));
     G4SubtractionSolid* Part2 = new G4SubtractionSolid("Part2",Part2_1,trd_hole,rotX,G4ThreeVector(0,Aeroy/2+air_thin+reflect_thick/2+trd_dz/2,-reflect_thick*0.5));
-  */
+
 
 
 
