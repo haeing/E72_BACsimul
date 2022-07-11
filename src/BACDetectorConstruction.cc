@@ -242,10 +242,10 @@ G4VPhysicalVolume* BACDetectorConstruction::Construct()
   //G4double empty_part2_z = Aeroy+air_thin*2;
 
   //original
-  //G4double trd_dxa = 2.4*cm;    //-z position x length
-  G4double trd_dxa = 4.8*cm;    //-z position x length
-  //G4double trd_dxb = Aerox*0.5+air_thin;
-  G4double trd_dxb = Aerox+air_thin*2;
+  G4double trd_dxa = 2.4*cm;    //-z position x length
+  //G4double trd_dxa = 4.8*cm;    //-z position x length
+  G4double trd_dxb = Aerox*0.5+air_thin;
+  //G4double trd_dxb = Aerox+air_thin*2;
   G4double trd_dya = 2.4*cm;
   G4double trd_dyb = empty_part2_z;                        
   G4double trd_dz  = light_guide_length_d*mm;
@@ -331,7 +331,7 @@ G4VPhysicalVolume* BACDetectorConstruction::Construct()
 
 
   //Two MPPC per each side
-  /*
+  
   //light guide bottom part
   G4SubtractionSolid* Part2_1 = new G4SubtractionSolid("Part2",part2_cover_second,trd_hole,rotX90,G4ThreeVector(-Aerox*0.25-air_thin*0.5,-(Aeroy/2+air_thin+reflect_thick/2+trd_dz/2),-reflect_thick*0.5));
   G4SubtractionSolid* Part2_2 = new G4SubtractionSolid("Part2",Part2_1,trd_hole,rotX90,G4ThreeVector(Aerox*0.25+air_thin*0.5,-(Aeroy/2+air_thin+reflect_thick/2+trd_dz/2),-reflect_thick*0.5));
@@ -339,13 +339,13 @@ G4VPhysicalVolume* BACDetectorConstruction::Construct()
   //light guide top part
   G4SubtractionSolid* Part2_3 = new G4SubtractionSolid("Part2",Part2_2,trd_hole,rotX,G4ThreeVector(-Aerox*0.25-air_thin*0.5,Aeroy/2+air_thin+reflect_thick/2+trd_dz/2,-reflect_thick*0.5));
   G4SubtractionSolid* Part2 = new G4SubtractionSolid("Part2",Part2_3,trd_hole,rotX,G4ThreeVector(Aerox*0.25+air_thin*0.5,Aeroy/2+air_thin+reflect_thick/2+trd_dz/2,-reflect_thick*0.5));
-  */
+
   
   //One MPPC per each side
-  
+  /*  
     G4SubtractionSolid* Part2_1 = new G4SubtractionSolid("Part2",part2_cover_second,trd_hole,rotX90,G4ThreeVector(0,-(Aeroy/2+air_thin+reflect_thick/2+trd_dz/2),-reflect_thick*0.5));
     G4SubtractionSolid* Part2 = new G4SubtractionSolid("Part2",Part2_1,trd_hole,rotX,G4ThreeVector(0,Aeroy/2+air_thin+reflect_thick/2+trd_dz/2,-reflect_thick*0.5));
-
+  */
 
 
 
