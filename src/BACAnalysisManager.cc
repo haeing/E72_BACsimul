@@ -144,8 +144,10 @@ void BACAnalysisManager::EndOfEvent(const G4Event* anEvent)
       mppctime[i] = aHit->GetTOF();
       mppcposx[i] = aHit->GetPosition().x();
       mppcposy[i] = aHit->GetPosition().y();
+      if(aHit->GetWorldPosition().x()<=0)mppcposz[i]=-1.0;
+      else if(aHit->GetWorldPosition().x()>0)mppcposz[i]=1.0;
       //mppcposz[i] = aHit->GetPosition().z();
-      mppcposz[i] = aHit->GetWorldPosition().y();
+      //mppcposz[i] = aHit->GetWorldPosition().y();
       mppcpid[i] = aHit->GetParticleID();
       mppcwavelength[i] = aHit->GetWavelength();
       

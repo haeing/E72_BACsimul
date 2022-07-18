@@ -30,13 +30,15 @@
 #include "G4RotationMatrix.hh"
 
 double theta = 62*TMath::Pi()/180;
-G4double r_out = 12*mm;
+G4double r_enter = 12*mm;
+//double theta = 45*TMath::Pi()/180;
+//G4double r_enter = 8*mm;
 
 double sint = TMath::Sin(theta);
 double cost = TMath::Cos(theta);
 
 double f(G4double r, G4double z){
-  return pow(r*cost+z*sint,2)+2*r_out*pow(1+sint,2)*r-2*r_out*cost*pow(2+sint,2)*z-pow(r_out,2)*(1+sint)*(3+sint);
+  return pow(r*cost+z*sint,2)+2*r_enter*pow(1+sint,2)*r-2*r_enter*cost*pow(2+sint,2)*z-pow(r_enter,2)*(1+sint)*(3+sint);
 }
 
 BACDetectorConstruction::BACDetectorConstruction(const G4String &num_aerogel, const G4String &th1,const G4String &th2,const G4String &th3)
@@ -395,6 +397,7 @@ G4VPhysicalVolume* BACDetectorConstruction::Construct()
 
     
 
+    //G4int numRZ = 30;
     G4int numRZ = 40;
     G4double win_thick = 1*mm;
     G4double mppc_thick = 1*mm;
@@ -415,7 +418,7 @@ G4VPhysicalVolume* BACDetectorConstruction::Construct()
     for(int i=0;i<numRZ;i++){
       z[i] = i*mm;
     }
-    r_in[0] = 12*mm;
+    r_in[0] = r_enter;
     r_out[0] = r_in[0]+win_thick;
     for(int i=1;i<numRZ;i++){
       G4double x = r_in[i-1];
@@ -465,6 +468,14 @@ G4VPhysicalVolume* BACDetectorConstruction::Construct()
     G4RotationMatrix *rotY = new G4RotationMatrix();
     rotY->rotateY(+90*degree);
     new G4PVPlacement(rotY,G4ThreeVector(0,0,Aeroz_real/2),ReflectLW,"Reflect",logicWorld,false,0,checkOverlaps);
+
+    //side reflector
+    G4Box* Side = new G4Box("Side",1*mm,15*cm,15*cm);
+    SideLW = new G4LogicalVolume(Side,Mylar,"Side");
+    new G4PVPlacement(0,G4ThreeVector(-Aerox/2-1*mm,0,0),SideLW,"Side",logicWorld,false,0,checkOverlaps);
+    new G4PVPlacement(0,G4ThreeVector(+Aerox/2+1*mm,0,0),SideLW,"Side",logicWorld,false,0,checkOverlaps);
+
+     
     
       
 
@@ -641,6 +652,7 @@ G4VPhysicalVolume* BACDetectorConstruction::Construct()
   new G4LogicalSkinSurface("mylar_surface",ReflectBLW,surface_mylar);
   new G4LogicalSkinSurface("mylar_surface",WinstonLW,surface_mylar);
   new G4LogicalSkinSurface("mylar_surface",CCPCLW,surface_mylar);
+  new G4LogicalSkinSurface("mylar_surface",SideLW,surface_mylar);
 
 
 

@@ -39,6 +39,7 @@ private:
   G4LogicalVolume* ReflectLW;
   G4LogicalVolume* ReflectBLW;
   G4LogicalVolume* DetectLW;
+  G4LogicalVolume* SideLW;
 
 
   std::vector<G4VisAttributes*> fVisAttributes;

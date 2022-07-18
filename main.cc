@@ -75,8 +75,8 @@ int main(int argc,char** argv)
       histname = "geant4_test.root";
       num_aerogel = "3";
       th1 = "45";
-      th2 = "80";
-      th3 = "30";
+      th2 = "75";
+      th3 = "35";
     }
   
 

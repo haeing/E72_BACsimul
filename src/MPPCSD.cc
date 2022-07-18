@@ -69,10 +69,10 @@ G4bool MPPCSD::ProcessHits(G4Step *astep, G4TouchableHistory *ROhist)
   G4double qe_value = QETable->Eval(E_p);
   if (qe_value < 0 || qe_value > 1) qe_value = 0;
 
-  //if(random<qe_value){
+  if(random<qe_value){
     MPPCHit* ahit = new MPPCHit(pos,worldPos, hitTime,pid,wavelength);
     MppcCollection->insert(ahit);
-    // }
+  }
   return true;
       
 
