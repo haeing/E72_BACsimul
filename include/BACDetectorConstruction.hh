@@ -14,7 +14,7 @@ class G4VisAttributes;
 class BACDetectorConstruction : public G4VUserDetectorConstruction
 {
 public:
-  BACDetectorConstruction(const G4String &num_aerogel, const G4String &reflec, const G4String &light, const G4String &middle);
+  BACDetectorConstruction(const G4String &num_aerogel, const G4String &th1, const G4String &th2, const G4String &th3);
   virtual ~BACDetectorConstruction();
 
   virtual void ConstructSDandField();
@@ -29,21 +29,27 @@ private:
   G4LogicalVolume* UpReflLW;
   G4LogicalVolume* DownReflLW;
   G4LogicalVolume* MPPCLW;
+  G4LogicalVolume* WinstonLW;
+  G4LogicalVolume* CCPCLW;
 
 
   G4LogicalVolume* Part1LW;
   G4LogicalVolume* Part2LW;
   G4LogicalVolume* CheckLW;
+  G4LogicalVolume* ReflectLW;
+  G4LogicalVolume* ReflectBLW;
+  G4LogicalVolume* DetectLW;
 
 
   std::vector<G4VisAttributes*> fVisAttributes;
 
-  const int version = 3;
+  const int version = 2;
 
   G4String num_aero;
-  G4String reflect_part_length;
-  G4String light_guide_length;
-  G4String middle_length;
+  G4String theta1_put;
+  G4String theta2_put;
+  G4String theta3_put;
+
 
   
 };

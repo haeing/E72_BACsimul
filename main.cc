@@ -58,23 +58,25 @@ int main(int argc,char** argv)
 
   //new test for kekcc sicmulation with input data(detector size)
   G4String num_aerogel;
-  G4String reflect_part_length;
-  G4String light_guide_length;
-  G4String middle_length;
+  G4String th1;
+  G4String th2;
+  G4String th3;
+  
+
   if(argc>=3){
     histname = argv[2];
     num_aerogel = argv[3];
-    reflect_part_length = argv[4];
-    light_guide_length = argv[5];
-    middle_length = argv[6];
+    th1 = argv[4];
+    th2 = argv[5];
+    th3 = argv[6];
   }
   else
     {
       histname = "geant4_test.root";
       num_aerogel = "3";
-      reflect_part_length = "140.0";
-      light_guide_length= "50.0";
-      middle_length = "20.0";
+      th1 = "45";
+      th2 = "80";
+      th3 = "30";
     }
   
 
@@ -91,7 +93,7 @@ int main(int argc,char** argv)
   // Set mandatory initialization classes
   //
   // Detector construction
-  runManager->SetUserInitialization(new BACDetectorConstruction(num_aerogel,reflect_part_length,light_guide_length,middle_length));
+  runManager->SetUserInitialization(new BACDetectorConstruction(num_aerogel,th1,th2,th3));
   
 
   // Physics list
