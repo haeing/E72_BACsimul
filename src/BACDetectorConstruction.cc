@@ -65,8 +65,8 @@ G4VPhysicalVolume* BACDetectorConstruction::Construct()
   */
 
   G4int num_aero_i = stoi(num_aero);
-  G4double reflect_part_length_d = 50;
-  G4double light_guide_length_d = 140;
+  G4double reflect_part_length_d = 140;
+  G4double light_guide_length_d = 50;
   G4double middle_length_d = 20;
   
   G4NistManager* nist = G4NistManager::Instance();
@@ -276,7 +276,7 @@ G4VPhysicalVolume* BACDetectorConstruction::Construct()
   G4double height_trap = Aeroy+air_thin*2;
   G4double length_trap = Aerox+air_thin*2;
 
-    
+
 
 
 
