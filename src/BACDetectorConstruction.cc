@@ -585,7 +585,7 @@ G4VPhysicalVolume* BACDetectorConstruction::Construct()
   auto visAttributes = new G4VisAttributes(G4Colour(1.0, 1.0, 1.0));
   visAttributes -> SetVisibility(false);
   logicWorld->SetVisAttributes(visAttributes);
-  DetectLW->SetVisAttributes(visAttributes);
+  if(version==2)DetectLW->SetVisAttributes(visAttributes);
   fVisAttributes.push_back(visAttributes);
 
   

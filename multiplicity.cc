@@ -2,7 +2,7 @@ void multiplicity(){
 
   gStyle->SetOptStat(0);
 
-  TFile *file =  new TFile("build/140_50_20_beam.root","read");
+  TFile *file =  new TFile("build/140_50_20_beam_noqe.root","read");
   TTree* data = (TTree*)file->Get("tree");
 
   Int_t nhMppc;
