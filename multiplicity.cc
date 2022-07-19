@@ -2,7 +2,7 @@ void multiplicity(){
 
   gStyle->SetOptStat(0);
 
-  TFile *file =  new TFile("BACSimul/build/140_50_20_beam_noqe.root","read");
+  TFile *file =  new TFile("build/140_50_20_beam.root","read");
   TTree* data = (TTree*)file->Get("tree");
 
   Int_t nhMppc;
@@ -129,7 +129,7 @@ void multiplicity(){
     
     if(evtposx>-40&&evtposx<40&&evtposy>-40&&evtposy<40)hist_multi_tight->Fill(result_tight);
     
-    if(result<2)evt->Fill(evtposx,evtposy);
+    if(multi_thre<2)evt->Fill(evtposx,evtposy);
     for(int l=0;l<5;l++){
       thre=l;
       if(result>=thre)effi_num[l]++;
