@@ -2,7 +2,7 @@ void multiplicity2(){
 
   gStyle->SetOptStat(0);
 
-  TFile *file =  new TFile("build/th1_45_th2_75_th3_35_noqe.root","read");
+  TFile *file =  new TFile("build/version2.root","read");
   TTree* data = (TTree*)file->Get("tree");
 
   Int_t nhMppc;
@@ -30,14 +30,22 @@ void multiplicity2(){
   Int_t cell_num[4][4][2];
 
   Double_t one = 6;
-  Int_t thre = 1;
+  Int_t thre = 8;
   Int_t result;
   Double_t effi_num[5];
+
+  Int_t num_check=10;
+  Int_t multi_effi[num_check];
+  Int_t effi_thre[num_check];
+  for(int i=0;i<num_check;i++){
+    multi_effi[i]=0;
+    effi_thre[i]=0;
+  }
 
   TH1D* hist_multi = new TH1D("hist_multi","hist_multi",32,0,32);
   TH1D* hist1 = new TH1D("hist1","hist1",25,0,25);
 
-  TH2D* evt = new TH2D("evt","evt",200,-80,80,200,-80,80);
+  TH2D* evt = new TH2D("evt","evt",50,-40,40,50,-40,40);
 
   TGraph *effi = new TGraph();
   //TGraph *effi_tight = new TGraph();
@@ -56,6 +64,7 @@ void multiplicity2(){
   
   result=0;
   multi_thre = 0;
+  for(int i=0;i<num_check;i++)multi_effi[i]=0;
     //result_tight=0;
     //if(evtposx>-40&&evtposx<40&&evtposy>-40&&evtposy<40)total_tight++;
 
@@ -79,19 +88,27 @@ void multiplicity2(){
 	result+=multi[nx][ny][nz];
 	if(cell_num[nx][ny][nz]>0)hist1->Fill(cell_num[nx][ny][nz]);
 	if(cell_num[nx][ny][nz]>thre)multi_thre++;
+	for(int l=1;l<num_check;l++){
+	    if(cell_num[nx][ny][nz]>l)multi_effi[l-1]++;
+	  }
 	
 	
       }
     }
   }
   hist_multi->Fill(multi_thre);
+  
   //hist_multi->Fill(result);
 
   
 
   
     
-    if(multi_thre<1)evt->Fill(evtposx,evtposy);
+  if(multi_thre>0)evt->Fill(evtposx,evtposy);
+  for(int f=0;f<num_check;f++){
+    if(multi_effi[f]>0)effi_thre[f]++;
+  }
+  multi_thre=0;
   }
     /*
     for(int l=0;l<5;l++){
@@ -125,6 +142,15 @@ void multiplicity2(){
   l1->AddEntry(effi,"whole range");
   l1->AddEntry(effi_tight,"8 cm * 8 cm");
     */
+
+  TGraph *graph_multi = new TGraph();
+  for(int i=0;i<num_check;i++){
+    std::cout<<effi_thre[i]<<std::endl;
+    graph_multi->AddPoint(1+i,effi_thre[i]/total);
+  }
+  graph_multi->SetMarkerStyle(21);
+  graph_multi->SetTitle("Efficiency;threshold of # of photons;efficiency");
+
   
   hist_multi->SetTitle("Whole range;multiplicity;n");
   //hist_multi_tight->SetTitle("8 cm * 8 cm;multiplicity;n");
@@ -140,7 +166,8 @@ void multiplicity2(){
   TCanvas *c2 = new TCanvas("c2","c2",800,650);
   c2->cd();
   hist1->Draw();
-  
+
+  evt->SetTitle("Position of the beam starting point;x [mm];y [mm]");
   TCanvas *c3 = new TCanvas("c3","c3",800,650);
   c3->cd();
   evt->Draw("colz");
@@ -150,5 +177,8 @@ void multiplicity2(){
   mg->Draw("AP");
   l1->Draw();
   */
-  
+
+  TCanvas *c5 = new TCanvas("c5","c5",800,650);
+  c5->cd();
+  graph_multi->Draw("AP");
 }

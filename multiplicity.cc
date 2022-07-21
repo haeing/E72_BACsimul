@@ -2,7 +2,7 @@ void multiplicity(){
 
   gStyle->SetOptStat(0);
 
-  TFile *file =  new TFile("build/140_50_20_beam_noqe.root","read");
+  TFile *file =  new TFile("build/version1.root","read");
   TTree* data = (TTree*)file->Get("tree");
 
   Int_t nhMppc;
@@ -32,11 +32,19 @@ void multiplicity(){
   Int_t cell_num_tight[8][4][2];
 
   Double_t one = 12;
-  Int_t thre = 3;
+  Int_t thre = 6;
   Int_t result;
   Int_t result_tight;
+  Int_t num_check=15;
+  Int_t multi_effi[num_check];
+  Int_t effi_thre[num_check];
   Double_t effi_num[5];
   Double_t effi_num_tight[5];
+
+  for(int i=0;i<num_check;i++){
+    multi_effi[i]=0;
+    effi_thre[i]=0;
+  }
   for(int i=0;i<5;i++){
     effi_num[i]=0;
     effi_num_tight[i]=0;
@@ -49,7 +57,7 @@ void multiplicity(){
   TH1D* hist1 = new TH1D("hist1","hist1",25,0,25);
   TH1D* histm = new TH1D("histm","histm",25,0,25);
 
-  TH2D* evt = new TH2D("evt","evt",200,-70,70,200,-70,70);
+  TH2D* evt = new TH2D("evt","evt",50,-40,40,50,-40,40);
 
   TGraph *effi = new TGraph();
   TGraph *effi_tight = new TGraph();
@@ -68,6 +76,7 @@ void multiplicity(){
     result=0;
     result_tight=0;
     multi_thre = 0;
+    for(int i=0;i<num_check;i++)multi_effi[i]=0;
     if(evtposx>-40&&evtposx<40&&evtposy>-40&&evtposy<40)total_tight++;
 
     for(int i=0;i<nhMppc;i++){
@@ -116,6 +125,9 @@ void multiplicity(){
 	  result+=multi[nx][ny][nz];
 	  if(cell_num[nx][ny][nz]>0)hist1->Fill(cell_num[nx][ny][nz]);
 	  if(cell_num[nx][ny][nz]>thre)multi_thre++;
+	  for(int l=1;l<num_check;l++){
+	    if(cell_num[nx][ny][nz]>l)multi_effi[l-1]++;
+	  }
 	  if(evtposx>-40&&evtposx<40&&evtposy>-40&&evtposy<40){
 	    result_tight+=multi[nx][ny][nz];
 	    //if(cell_num_tight[nx][ny][nz]>0)hist1->Fill(cell_num[nx][ny][nz]);
@@ -129,7 +141,12 @@ void multiplicity(){
     
     if(evtposx>-40&&evtposx<40&&evtposy>-40&&evtposy<40)hist_multi_tight->Fill(result_tight);
     
-    if(multi_thre<2)evt->Fill(evtposx,evtposy);
+    if(multi_thre>1)evt->Fill(evtposx,evtposy);
+    for(int f=0;f<num_check;f++){
+      if(multi_effi[f]>1)effi_thre[f]++;
+    }
+    multi_thre=0;
+    /*
     for(int l=0;l<5;l++){
       thre=l;
       if(result>=thre)effi_num[l]++;
@@ -137,7 +154,7 @@ void multiplicity(){
 	if(result_tight>=thre)effi_num_tight[l]++;
       }
 
-    }
+      }*/
   }
 
   Double_t divide;
@@ -163,6 +180,14 @@ void multiplicity(){
   hist_multi->SetTitle("Whole range;multiplicity;n");
   hist_multi_tight->SetTitle("8 cm * 8 cm;multiplicity;n");
   hist1->SetTitle("# of photons at each cell;# of photons;n");
+
+  TGraph *graph_multi = new TGraph();
+  for(int i=0;i<num_check;i++){
+    std::cout<<multi_effi[i]<<std::endl;
+    graph_multi->AddPoint(1+i,effi_thre[i]/total);
+  }
+  graph_multi->SetMarkerStyle(21);
+  graph_multi->SetTitle("Efficiency;threshold of # of photons;efficiency");
   TCanvas *c1 = new TCanvas("c1","c1",800,650);
   c1->Divide(2);
   c1->cd(1);
@@ -175,6 +200,7 @@ void multiplicity(){
   c2->cd();
   histm->Draw();
 
+  evt->SetTitle("Position of the beam starting point;x [mm]; y [mm]");
   TCanvas *c3 = new TCanvas("c3","c3",800,650);
   c3->cd();
   evt->Draw("colz");
@@ -183,5 +209,9 @@ void multiplicity(){
   c4->cd();
   mg->Draw("AP");
   l1->Draw();
+
+  TCanvas *c5 = new TCanvas("c5","c5",800,650);
+  c5->cd();
+  graph_multi->Draw("AP");
   
 }

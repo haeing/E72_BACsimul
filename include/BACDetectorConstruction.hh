@@ -44,7 +44,7 @@ private:
 
   std::vector<G4VisAttributes*> fVisAttributes;
 
-  const int version = 1;
+  const int version = 2;
 
   G4String num_aero;
   G4String theta1_put;
