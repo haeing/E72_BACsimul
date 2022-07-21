@@ -27,8 +27,8 @@ MPPCHit::MPPCHit(G4ThreeVector& axyz, G4double t)
 MPPCHit::~MPPCHit()
 {}
 
-MPPCHit::MPPCHit(G4ThreeVector &axyz, G4ThreeVector &wxyz, G4double t, G4int pid, G4double Wavelength)
-  :xyz(axyz), worldxyz(wxyz), tof(t),particleID(pid), wavelengthMP(Wavelength)
+MPPCHit::MPPCHit(G4ThreeVector &axyz, G4ThreeVector &wxyz, G4double t, G4int pid, G4double Wavelength, G4int cn)
+  :xyz(axyz), worldxyz(wxyz), tof(t),particleID(pid), wavelengthMP(Wavelength), copynum(cn)
 {}
 
 /*

@@ -62,6 +62,7 @@ private:
   double mppcposy[num_mppchit];
   double mppcposz[num_mppchit];
   double mppcwavelength[num_mppchit];
+  int mppcnum[num_mppchit];
 
   int nhAero;
   int aeropid[num_aerohit];

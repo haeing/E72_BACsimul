@@ -15,7 +15,7 @@ class MPPCHit : public G4VHit
 public:
   MPPCHit();
   MPPCHit(G4ThreeVector& axyz, G4double t);
-  MPPCHit(G4ThreeVector& axyz, G4ThreeVector& wxyz, G4double t, G4int pid, G4double Wavelength);
+  MPPCHit(G4ThreeVector& axyz, G4ThreeVector& wxyz, G4double t, G4int pid, G4double Wavelength, G4int cn);
   virtual ~MPPCHit();
 
   //copy constructor & assignment operator
@@ -49,6 +49,8 @@ public:
   G4double GetPhotonCount() {return fPhotons;}
   void ClearPhotonCount() {fPhotons=0.0;}
 
+  G4int GetCopyNum() const {return copynum;}
+
 
 
 
@@ -66,6 +68,7 @@ private:
   //G4double fTime;
   G4double fPhotons;
   //G4ThreeVector fPos;
+  G4double copynum;
 
 };
 
@@ -76,6 +79,7 @@ inline MPPCHit::MPPCHit(const MPPCHit& right)
   worldxyz = right.worldxyz;
   tof = right.tof;
   wavelengthMP = right.wavelengthMP;
+  copynum = right.copynum;
 }
 
 inline const MPPCHit& MPPCHit::operator=
@@ -85,6 +89,7 @@ inline const MPPCHit& MPPCHit::operator=
   worldxyz = right.worldxyz;
   tof = right.tof;
   wavelengthMP = right.wavelengthMP;
+  copynum = right.copynum;
   return *this;
 }
 

@@ -56,6 +56,8 @@ G4bool MPPCSD::ProcessHits(G4Step *astep, G4TouchableHistory *ROhist)
   const G4double c = 3.0e+8;
   G4double wavelength = ((h*c)/(energy*1.6e-13))*(1e+9); //nm
 
+  G4int copynumber = preStepPoint->GetTouchableHandle()->GetCopyNumber();
+
   
   
   
@@ -70,7 +72,7 @@ G4bool MPPCSD::ProcessHits(G4Step *astep, G4TouchableHistory *ROhist)
   if (qe_value < 0 || qe_value > 1) qe_value = 0;
 
   //if(random<qe_value){
-    MPPCHit* ahit = new MPPCHit(pos,worldPos, hitTime,pid,wavelength);
+  MPPCHit* ahit = new MPPCHit(pos,worldPos, hitTime,pid,wavelength, copynumber);
     MppcCollection->insert(ahit);
     //}
   return true;
