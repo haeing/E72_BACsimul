@@ -2,16 +2,18 @@ void multiplicity2(){
 
   gStyle->SetOptStat(0);
 
-  TFile *file =  new TFile("build/version2.root","read");
+  TFile *file =  new TFile("build/th1_45_th2_75_th3_45_noqe.root","read");
   TTree* data = (TTree*)file->Get("tree");
 
   Int_t nhMppc;
   Double_t x[1000];
   Double_t y[1000];
   Double_t z[1000];
+  Int_t copynum[1000];
 
   Double_t evtposx;
   Double_t evtposy;
+
   
 
   data->SetBranchAddress("nhMppc",&nhMppc);
@@ -20,17 +22,23 @@ void multiplicity2(){
   data->SetBranchAddress("mppcposx",x);
   data->SetBranchAddress("mppcposy",y);
   data->SetBranchAddress("mppcposz",z);
+  data->SetBranchAddress("mppcnum",copynum);
 
   Double_t total = data->GetEntries();
-  
+  /*
   Int_t numx = 4;
   Int_t numy = 4;
-  Int_t numz = 2;
-  Int_t multi[4][4][2];
-  Int_t cell_num[4][4][2];
+  Int_t numz = 5;
+  */
+  Int_t numx = 1;
+  Int_t numy = 1;
+  Int_t numz = 5;
+  Int_t multi[numx][numy][numz];
+  Int_t cell_num[numx][numy][numz];
 
-  Double_t one = 6;
-  Int_t thre = 8;
+  Double_t one = 24;
+  Double_t oney = 24;
+  Int_t thre = 3;
   Int_t result;
   Double_t effi_num[5];
 
@@ -72,7 +80,7 @@ void multiplicity2(){
     for(int nx=0;nx<numx;nx++){
       for(int ny=0;ny<numy;ny++){
 	for(int nz=0;nz<numz;nz++){
-	  if(-12+one*nx<=x[i]&&-12+one*(nx+1)>x[i]&&-12+one*ny<=y[i]&&-12+one*(ny+1)>y[i]&&-200+nz*200<=z[i]&&-200+(nz+1)*200>z[i]){
+	  if(-12+one*nx<=x[i]&&-12+one*(nx+1)>x[i]&&-12+oney*ny<=y[i]&&-12+oney*(ny+1)>y[i]&&nz+1<=copynum[i]&&nz+2>copynum[i]){
 	      multi[nx][ny][nz]=1;
 	      cell_num[nx][ny][nz]++;
 	  }
@@ -88,7 +96,7 @@ void multiplicity2(){
 	result+=multi[nx][ny][nz];
 	if(cell_num[nx][ny][nz]>0)hist1->Fill(cell_num[nx][ny][nz]);
 	if(cell_num[nx][ny][nz]>thre)multi_thre++;
-	for(int l=1;l<num_check;l++){
+	for(int l=1;l<num_check+1;l++){
 	    if(cell_num[nx][ny][nz]>l)multi_effi[l-1]++;
 	  }
 	

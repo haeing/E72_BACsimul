@@ -2,7 +2,7 @@ void multiplicity(){
 
   gStyle->SetOptStat(0);
 
-  TFile *file =  new TFile("build/version1.root","read");
+  TFile *file =  new TFile("build/reflect_140_lg_50_mid_20_beam_z2mm_noqe.root","read");
   TTree* data = (TTree*)file->Get("tree");
 
   Int_t nhMppc;
@@ -23,7 +23,7 @@ void multiplicity(){
 
   Double_t total = data->GetEntries();
   
-  Int_t numx = 8;
+  /*Int_t numx = 8;
   Int_t numy = 4;
   Int_t numz = 2;
   Int_t multi[8][4][2];
@@ -31,8 +31,18 @@ void multiplicity(){
   Int_t cell_num[8][4][2];
   Int_t cell_num_tight[8][4][2];
 
-  Double_t one = 12;
-  Int_t thre = 6;
+  Double_t one = 6;
+  */
+  Int_t numx = 2;
+  Int_t numy = 1;
+  Int_t numz = 2;
+  Int_t multi[numx][numy][numz];
+  Int_t multi_tight[numx][numy][numz];
+  Int_t cell_num[numx][numy][numz];
+  Int_t cell_num_tight[numx][numy][numz];
+
+  Double_t one = 24;
+  Int_t thre = 1;
   Int_t result;
   Int_t result_tight;
   Int_t num_check=15;

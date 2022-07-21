@@ -76,7 +76,7 @@ int main(int argc,char** argv)
       num_aerogel = "3";
       th1 = "45";
       th2 = "75";
-      th3 = "35";
+      th3 = "45";
     }
   
 
