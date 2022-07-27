@@ -2,7 +2,7 @@ void multiplicity2(){
 
   gStyle->SetOptStat(0);
 
-  TFile *file =  new TFile("build/v1_noqe.root","read");
+  TFile *file =  new TFile("build/version3_ae40.root","read");
   TTree* data = (TTree*)file->Get("tree");
 
   Int_t nhMppc;
@@ -32,13 +32,13 @@ void multiplicity2(){
   */
   Int_t numx = 1;
   Int_t numy = 1;
-  Int_t numz = 4;
+  Int_t numz = 5;
   Int_t multi[numx][numy][numz];
   Int_t cell_num[numx][numy][numz];
 
   Double_t onex = 24/numx;
   Double_t oney = 24/numy;
-  Int_t thre = 15;
+  Int_t thre = 5;
   Int_t result;
   Double_t effi_num[5];
 
@@ -53,7 +53,7 @@ void multiplicity2(){
   TH1D* hist_multi = new TH1D("hist_multi","hist_multi",32,0,32);
   TH1D* hist1 = new TH1D("hist1","hist1",25,0,25);
 
-  TH2D* evt = new TH2D("evt","evt",200,-40,40,200,-40,40);
+  TH2D* evt = new TH2D("evt","evt",200,-65,65,200,-65,65);
 
   TGraph *effi = new TGraph();
   //TGraph *effi_tight = new TGraph();
@@ -112,9 +112,9 @@ void multiplicity2(){
 
   
     
-  if(multi_thre>0)evt->Fill(evtposx,evtposy);
+  if(multi_thre>2)evt->Fill(evtposx,evtposy);
   for(int f=0;f<num_check;f++){
-    if(multi_effi[f]>0)effi_thre[f]++;
+    if(multi_effi[f]>2)effi_thre[f]++;
   }
   multi_thre=0;
   }
