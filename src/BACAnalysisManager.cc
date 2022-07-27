@@ -55,32 +55,34 @@ void BACAnalysisManager::BeginOfRun(const G4Run*)
   tree->Branch("event",&event, "event/I");
   tree->Branch("nEvt",&nEvt, "nEvt/I");
   //tree->Branch("evtid",evtid,"evtid[nEvt]/I");
-  tree->Branch("evtpid",&evtpid,"evtpid/I");
+  //tree->Branch("evtpid",&evtpid,"evtpid/I");
   tree->Branch("evtposx",&evtposx,"evtposx/D");
   tree->Branch("evtposy",&evtposy,"evtposy/D");
-  tree->Branch("evtposz",&evtposz,"evtposz/D");
+  //tree->Branch("evtposz",&evtposz,"evtposz/D");
   //tree->Branch("evtpid",evtpid,"evtpid[nEvt]/I");
   tree->Branch("evtnumce",&evtnumce,"evtnumce/I");
 
 
   //Aerogel
+  /*
   tree->Branch("nhAero",&nhAero,"nhAero/I");
   tree->Branch("aeropid",aeropid,"aeropid[nhAero]/I");
   tree->Branch("aeroposx",aeroposx,"aeroposx[nhAero]/D");
   tree->Branch("aeroposy",aeroposy,"aeroposy[nhAero]/D");
   tree->Branch("aeroposz",aeroposz,"aeroposz[nhAero]/D");
   tree->Branch("aerotime",aerotime,"aerotime[nhAero]/D");
+  */
 
   
   
   //MPPC
   tree->Branch("nhMppc",&nhMppc,"nhMppc/I");
   //tree->Branch("mppcmulti"&mppcmulti,"mppcmulti/I");
-  tree->Branch("mppcpid",mppcpid,"mppcpid[nhMppc]/I");
+  //tree->Branch("mppcpid",mppcpid,"mppcpid[nhMppc]/I");
   tree->Branch("mppcposx",mppcposx,"mppcposx[nhMppc]/D");
   tree->Branch("mppcposy",mppcposy,"mppcposy[nhMppc]/D");
   tree->Branch("mppcposz",mppcposz,"mppcposz[nhMppc]/D");
-  tree->Branch("mppctime",mppctime,"mppctime[nhMppc]/D");
+  //tree->Branch("mppctime",mppctime,"mppctime[nhMppc]/D");
   tree->Branch("mppcwavelength",mppcwavelength,"mppcwavelength[nhMppc]/D");
   tree->Branch("mppcnum",mppcnum,"mppcnum[nhMppc]/I");
 
@@ -145,9 +147,9 @@ void BACAnalysisManager::EndOfEvent(const G4Event* anEvent)
       mppctime[i] = aHit->GetTOF();
       mppcposx[i] = aHit->GetPosition().x();
       mppcposy[i] = aHit->GetPosition().y();
-      if(aHit->GetWorldPosition().x()<=0)mppcposz[i]=-1.0;
-      else if(aHit->GetWorldPosition().x()>0)mppcposz[i]=1.0;
-      //mppcposz[i] = aHit->GetPosition().z();
+      //if(aHit->GetWorldPosition().x()<=0)mppcposz[i]=-1.0;
+      //else if(aHit->GetWorldPosition().x()>0)mppcposz[i]=1.0;
+      mppcposz[i] = aHit->GetPosition().z();
       //mppcposz[i] = aHit->GetWorldPosition().y();
       mppcpid[i] = aHit->GetParticleID();
       mppcwavelength[i] = aHit->GetWavelength();

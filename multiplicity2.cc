@@ -2,7 +2,7 @@ void multiplicity2(){
 
   gStyle->SetOptStat(0);
 
-  TFile *file =  new TFile("build/th1_45_th2_75_th3_45_noqe.root","read");
+  TFile *file =  new TFile("build/v1_noqe.root","read");
   TTree* data = (TTree*)file->Get("tree");
 
   Int_t nhMppc;
@@ -32,17 +32,17 @@ void multiplicity2(){
   */
   Int_t numx = 1;
   Int_t numy = 1;
-  Int_t numz = 5;
+  Int_t numz = 4;
   Int_t multi[numx][numy][numz];
   Int_t cell_num[numx][numy][numz];
 
-  Double_t one = 24;
-  Double_t oney = 24;
-  Int_t thre = 3;
+  Double_t onex = 24/numx;
+  Double_t oney = 24/numy;
+  Int_t thre = 15;
   Int_t result;
   Double_t effi_num[5];
 
-  Int_t num_check=10;
+  Int_t num_check=20;
   Int_t multi_effi[num_check];
   Int_t effi_thre[num_check];
   for(int i=0;i<num_check;i++){
@@ -53,7 +53,7 @@ void multiplicity2(){
   TH1D* hist_multi = new TH1D("hist_multi","hist_multi",32,0,32);
   TH1D* hist1 = new TH1D("hist1","hist1",25,0,25);
 
-  TH2D* evt = new TH2D("evt","evt",50,-40,40,50,-40,40);
+  TH2D* evt = new TH2D("evt","evt",200,-40,40,200,-40,40);
 
   TGraph *effi = new TGraph();
   //TGraph *effi_tight = new TGraph();
@@ -80,7 +80,7 @@ void multiplicity2(){
     for(int nx=0;nx<numx;nx++){
       for(int ny=0;ny<numy;ny++){
 	for(int nz=0;nz<numz;nz++){
-	  if(-12+one*nx<=x[i]&&-12+one*(nx+1)>x[i]&&-12+oney*ny<=y[i]&&-12+oney*(ny+1)>y[i]&&nz+1<=copynum[i]&&nz+2>copynum[i]){
+	  if(-12+onex*nx<=x[i]&&-12+onex*(nx+1)>x[i]&&-12+oney*ny<=y[i]&&-12+oney*(ny+1)>y[i]&&nz+1<=copynum[i]&&nz+2>copynum[i]){
 	      multi[nx][ny][nz]=1;
 	      cell_num[nx][ny][nz]++;
 	  }
@@ -162,7 +162,7 @@ void multiplicity2(){
   
   hist_multi->SetTitle("Whole range;multiplicity;n");
   //hist_multi_tight->SetTitle("8 cm * 8 cm;multiplicity;n");
-  //hist1->SetTitle("# of photons at each cell;# of photons;n");
+  hist1->SetTitle("# of photons at each cell;# of photons;n");
   TCanvas *c1 = new TCanvas("c1","c1",800,650);
   //c1->Divide(2);
   c1->cd(1);
@@ -189,4 +189,6 @@ void multiplicity2(){
   TCanvas *c5 = new TCanvas("c5","c5",800,650);
   c5->cd();
   graph_multi->Draw("AP");
+
+ 
 }

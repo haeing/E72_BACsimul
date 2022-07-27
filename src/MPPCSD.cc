@@ -73,7 +73,7 @@ G4bool MPPCSD::ProcessHits(G4Step *astep, G4TouchableHistory *ROhist)
 
   //if(random<qe_value){
   MPPCHit* ahit = new MPPCHit(pos,worldPos, hitTime,pid,wavelength, copynumber);
-    MppcCollection->insert(ahit);
+  MppcCollection->insert(ahit);
     //}
   return true;
       
