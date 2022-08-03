@@ -68,6 +68,11 @@ void BACPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
     energy = 4*GeV;
     fParticleGun->SetParticleDefinition (particleTable -> FindParticle("mu-"));
   }
+
+  if(particle=="electron"){
+    energy = 500*MeV;
+    fParticleGun->SetParticleDefinition (particleTable -> FindParticle("e-"));
+  } 
     
   
   fParticleGun->SetParticleMomentumDirection ( G4ThreeVector(0,0,1) );

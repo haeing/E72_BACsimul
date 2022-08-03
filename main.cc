@@ -74,16 +74,18 @@ int main(int argc,char** argv)
       //histname = "geant4_test.root";
       if(version_put=="1"){
 	num_aerogel = "3";
-	/*
+
 	//1.10
 	par1_put = "140";
 	par2_put = "50";
 	par3_put = "20";
-	*/
+
+	/*
 	//1.05
 	par1_put = "120";
 	par2_put = "70";
 	par3_put = "25";
+	*/
       }
 
       else if(version_put=="2"){

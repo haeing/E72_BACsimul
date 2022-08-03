@@ -48,9 +48,11 @@ G4bool AeroSD::ProcessHits(G4Step *astep, G4TouchableHistory *ROhist)
   G4int pid = astep->GetTrack()->GetDefinition()->GetPDGEncoding();
   G4ThreeVector pos =preStepPoint->GetPosition();
 
-  //Angle inside the aerogel
-  G4ThreeVector mom = postStepPoint -> GetMomentum();
-  G4double angle = TMath::ACos(mom.z()/mom.mag())*180/TMath::Pi();
+  //Angle
+  G4double angle;
+  G4ThreeVector mom;
+  mom = postStepPoint -> GetMomentum();
+  angle = TMath::ACos(mom.z()/mom.mag())*180/TMath::Pi();
 
       
 
