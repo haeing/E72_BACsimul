@@ -160,8 +160,8 @@ G4VPhysicalVolume* BACDetectorConstruction::Construct()
   G4double aerogel_ep[] = {1.3*eV,7.*eV};
   G4double aerogel_abs[] = {20*mm,20*mm};
   //G4double aerogel_abs[] = {40*mm,40*mm};
-  //G4double aerogel_rindex[]={1.10,1.10};
-  G4double aerogel_rindex[]={1.05,1.05};
+  G4double aerogel_rindex[]={1.10,1.10};
+  //G4double aerogel_rindex[]={1.05,1.05};
   G4double aerogel_ray[] = {6.16*pow(10,10),6.16*pow(10,10)};
 
   assert(sizeof(aerogel_ep_abs)==sizeof(aerogel_abs));

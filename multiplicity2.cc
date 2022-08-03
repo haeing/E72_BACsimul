@@ -2,7 +2,7 @@ void multiplicity2(){
 
   gStyle->SetOptStat(0);
 
-  TFile *file =  new TFile("build/v4_36_60_40_mu_105.root","read");
+  TFile *file =  new TFile("build/v4_110_withqe.root","read");
   TTree* data = (TTree*)file->Get("tree");
 
   Int_t nhMppc;
@@ -30,9 +30,9 @@ void multiplicity2(){
   Int_t numy = 4;
   Int_t numz = 5;
   */
-  Int_t numx = 1;
-  Int_t numy = 1;
-  Int_t numz = 11;
+  Int_t numx = 2;
+  Int_t numy = 2;
+  Int_t numz = 5;
   Int_t multi[numx][numy][numz];
   Int_t cell_num[numx][numy][numz];
 
@@ -45,13 +45,14 @@ void multiplicity2(){
   Int_t num_check=20;
   Int_t multi_effi[num_check];
   Int_t effi_thre[num_check];
+  Int_t mul_th = 0;
   for(int i=0;i<num_check;i++){
     multi_effi[i]=0;
     effi_thre[i]=0;
   }
 
   TH1D* hist_multi = new TH1D("hist_multi","hist_multi",32,0,32);
-  TH1D* hist1 = new TH1D("hist1","hist1",25,0,25);
+  TH1D* hist1 = new TH1D("hist1","hist1",50,0,50);
 
   TH2D* evt = new TH2D("evt","evt",200,-65,65,200,-65,65);
 
@@ -112,9 +113,9 @@ void multiplicity2(){
 
   
     
-  if(multi_thre>0)evt->Fill(evtposx,evtposy);
+  if(multi_thre>mul_th)evt->Fill(evtposx,evtposy);
   for(int f=0;f<num_check;f++){
-    if(multi_effi[f]>0)effi_thre[f]++;
+    if(multi_effi[f]>mul_th)effi_thre[f]++;
   }
   multi_thre=0;
   }
