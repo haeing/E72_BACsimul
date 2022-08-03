@@ -64,14 +64,17 @@ void BACAnalysisManager::BeginOfRun(const G4Run*)
 
 
   //Aerogel
-  /*
+  
   tree->Branch("nhAero",&nhAero,"nhAero/I");
+  tree->Branch("aeroangle",aeroangle,"aeroangle[nhAero]/D");
+  /*
   tree->Branch("aeropid",aeropid,"aeropid[nhAero]/I");
   tree->Branch("aeroposx",aeroposx,"aeroposx[nhAero]/D");
   tree->Branch("aeroposy",aeroposy,"aeroposy[nhAero]/D");
   tree->Branch("aeroposz",aeroposz,"aeroposz[nhAero]/D");
   tree->Branch("aerotime",aerotime,"aerotime[nhAero]/D");
   */
+
 
   
   
@@ -172,6 +175,7 @@ void BACAnalysisManager::EndOfEvent(const G4Event* anEvent)
   for(int i=0;i<nhaero;i++)
     {
       AeroHit* aHit = (*AEROHC)[i];
+      aeroangle[i] = aHit->GetAngle();
       aerotime[i] = aHit->GetTOF();
       aeroposx[i] = aHit->GetPosition().x();
       aeroposy[i] = aHit->GetPosition().y();

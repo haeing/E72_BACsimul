@@ -65,6 +65,7 @@ private:
   int mppcnum[num_mppchit];
 
   int nhAero;
+  double aeroangle[num_aerohit];
   int aeropid[num_aerohit];
   double aerotime[num_aerohit];
   double aeroposx[num_aerohit];

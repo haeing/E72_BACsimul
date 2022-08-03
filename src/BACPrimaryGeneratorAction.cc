@@ -51,8 +51,8 @@ void BACPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   
   //homogeneous test------------------------------------
   
-  //G4double momentum = 0.735;
-  G4double momentum = 4;
+  G4double momentum = 0.735;
+  //G4double momentum = 4;
   G4double beam_size = 125;
   G4double tight_size = 80; 
 

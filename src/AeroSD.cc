@@ -2,6 +2,8 @@
 #include "AeroHit.hh"
 #include "typeinfo"
 
+#include <TMath.h>
+
 #include "G4HCofThisEvent.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4TouchableHistory.hh"
@@ -41,16 +43,22 @@ void AeroSD::Initialize(G4HCofThisEvent *HCTE)
 G4bool AeroSD::ProcessHits(G4Step *astep, G4TouchableHistory *ROhist)
 {
   const G4StepPoint* preStepPoint = astep-> GetPreStepPoint();
+  const G4StepPoint* postStepPoint = astep-> GetPostStepPoint();
   G4Track* atrack = astep->GetTrack();
   G4int pid = astep->GetTrack()->GetDefinition()->GetPDGEncoding();
   G4ThreeVector pos =preStepPoint->GetPosition();
+
+  //Angle inside the aerogel
+  G4ThreeVector mom = postStepPoint -> GetMomentum();
+  G4double angle = TMath::ACos(mom.z()/mom.mag())*180/TMath::Pi();
+
       
 
   
   G4double tof = astep->GetPreStepPoint()->GetGlobalTime();
 
 
-  AeroHit* ahit = new AeroHit(pos,tof,pid);
+  AeroHit* ahit = new AeroHit(pos,tof,pid,angle);
 
   AeroCollection->insert(ahit);
 

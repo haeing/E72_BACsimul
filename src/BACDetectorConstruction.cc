@@ -158,10 +158,10 @@ G4VPhysicalVolume* BACDetectorConstruction::Construct()
   
 
   G4double aerogel_ep[] = {1.3*eV,7.*eV};
-  //G4double aerogel_abs[] = {15*mm,15*mm};
-  G4double aerogel_abs[] = {40*mm,40*mm};
-  //G4double aerogel_rindex[]={1.10,1.10};
-  G4double aerogel_rindex[]={1.05,1.05};
+  G4double aerogel_abs[] = {20*mm,20*mm};
+  //G4double aerogel_abs[] = {40*mm,40*mm};
+  G4double aerogel_rindex[]={1.10,1.10};
+  //G4double aerogel_rindex[]={1.05,1.05};
   G4double aerogel_ray[] = {6.16*pow(10,10),6.16*pow(10,10)};
 
   assert(sizeof(aerogel_ep_abs)==sizeof(aerogel_abs));
@@ -954,18 +954,19 @@ G4VPhysicalVolume* BACDetectorConstruction::Construct()
     MPPCLW = new G4LogicalVolume(MPPC,Epoxi,"MPPC");
     G4RotationMatrix *rotM = new G4RotationMatrix();
     rotM->rotateX(90*degree+mppc_theta);
-    /*
+
     for(int i=0;i<5;i++){
       new G4PVPlacement(rotM,G4ThreeVector((29*(i-2))*mm,Aeroy/2+mppc_place*1.5*TMath::Sin(mppc_theta),Aeroz_real/2+mppc_place*1.5*TMath::Cos(mppc_theta)),MPPCLW,"MPPC",logicWorld,false,i+1,checkOverlaps);
     }
-    */
 
 
 
 
+    /*
     for(int i=0;i<11;i++){
-      new G4PVPlacement(rotM,G4ThreeVector((12*(i-5))*mm,Aeroy/2+mppc_place/2*TMath::Sin(theta3),Aeroz_real/2+mppc_place/2*TMath::Cos(theta3)),MPPCLW,"MPPC",logicWorld,false,i+1,checkOverlaps);
+      new G4PVPlacement(rotM,G4ThreeVector((12*(i-5))*mm,Aeroy/2+mppc_place*1.5*TMath::Sin(mppc_theta),Aeroz_real/2+mppc_place*1.5*TMath::Cos(mppc_theta)),MPPCLW,"MPPC",logicWorld,false,i+1,checkOverlaps);
     }
+    */
 
 
   }

@@ -16,12 +16,13 @@ private:
   G4ThreeVector xyz;
   G4int particleID;
   G4double tof;
+  G4double angleget;
 
   
 public:
   AeroHit();
   AeroHit(G4ThreeVector& axyz, G4double t);
-  AeroHit(G4ThreeVector& axyz, G4double t, G4int pid);
+  AeroHit(G4ThreeVector& axyz, G4double t, G4int pid, G4double angle);
   virtual ~AeroHit();
 
   AeroHit(const AeroHit& right);
@@ -38,6 +39,7 @@ public:
   G4double GetTOF() const {return tof;}
   
   G4int GetParticleID() const {return particleID;}
+  G4double GetAngle() const {return angleget;}
   //G4int GetNum() const {return count_ce;}
 
   //void SetTime(G4double dt) {fTime = dt;}
@@ -59,6 +61,7 @@ inline AeroHit::AeroHit(const AeroHit& right)
   xyz = right.xyz;
   tof = right.tof;
   particleID = right.particleID;
+  angleget = right.angleget;
 
 }
 
@@ -68,6 +71,7 @@ inline const AeroHit& AeroHit::operator=
   xyz = right.xyz;
   tof = right.tof;
   particleID = right.particleID;
+  angleget = right.angleget;
 
   return *this;
 }

@@ -27,8 +27,8 @@ AeroHit::AeroHit(G4ThreeVector& axyz, G4double t)
 AeroHit::~AeroHit()
 {}
 
-AeroHit::AeroHit(G4ThreeVector &axyz, G4double t, G4int pid)
-  :xyz(axyz), tof(t),particleID(pid)
+AeroHit::AeroHit(G4ThreeVector &axyz, G4double t, G4int pid, G4double angle)
+  :xyz(axyz), tof(t),particleID(pid),angleget(angle)
 {}
 /*
 const AeroHit& AeroHit::operator=(const AeroHit &right)
