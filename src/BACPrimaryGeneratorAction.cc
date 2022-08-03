@@ -51,7 +51,8 @@ void BACPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   
   //homogeneous test------------------------------------
   
-  G4double momentum = 0.735;
+  //G4double momentum = 0.735;
+  G4double momentum = 4;
   G4double beam_size = 125;
   G4double tight_size = 80; 
 
@@ -76,9 +77,10 @@ void BACPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   //original 220621
   G4double y = beam_size*0.5-G4UniformRand()*beam_size*mm;
   //G4double y = tight_size*0.5-G4UniformRand()*tight_size*mm;
-  fParticleGun->SetParticlePosition(G4ThreeVector(x,y,-10*cm) );
-  //fParticleGun->SetParticlePosition(G4ThreeVector(0,0,-10*cm) );
+  fParticleGun->SetParticlePosition(G4ThreeVector(x,y,-5*cm) );
+  //fParticleGun -> SetParticleDefinition (particleTable -> FindParticle("opticalphoton"));
   fParticleGun->SetParticleEnergy(energy);
+  //fParticleGun->SetParticleEnergy(2.5*eV);
   fParticleGun->GeneratePrimaryVertex(anEvent);
 
 

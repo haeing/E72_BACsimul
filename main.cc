@@ -41,42 +41,81 @@ int main(int argc,char** argv)
 
   G4UIExecutive* ui = 0;
   if ( argc == 1 ) {
+
+    //std::cout<<"Please enter the version"<<std::endl;
     ui = new G4UIExecutive(argc, argv);
+    
   }
 
   G4String histname;
-  /*
-  if(argc>=3){
-    histname = argv[2];
-  }
-  else
-    {
-      histname = "geant4_test.root";
-    }
-  */
 
-
-  //new test for kekcc sicmulation with input data(detector size)
+  G4String version_put;
   G4String num_aerogel;
-  G4String th1;
-  G4String th2;
-  G4String th3;
+  G4String par1_put;
+  G4String par2_put;
+  G4String par3_put;
+
+  
   
 
   if(argc>=3){
     histname = argv[2];
-    num_aerogel = argv[3];
-    th1 = argv[4];
-    th2 = argv[5];
-    th3 = argv[6];
+    version_put = argv[3];
+    num_aerogel = argv[4];
+    par1_put = argv[5];
+    par2_put = argv[6];
+    par3_put = argv[7];
   }
   else
     {
       histname = "geant4_test.root";
-      num_aerogel = "3";
-      th1 = "45";
-      th2 = "75";
-      th3 = "50";
+
+      version_put = argv[1];
+      //histname = "geant4_test.root";
+      if(version_put=="1"){
+	num_aerogel = "3";
+	/*
+	//1.10
+	par1_put = "140";
+	par2_put = "50";
+	par3_put = "20";
+	*/
+	//1.05
+	par1_put = "120";
+	par2_put = "70";
+	par3_put = "25";
+      }
+
+      else if(version_put=="2"){
+	num_aerogel = "3";
+	//1.10
+	par1_put = "45";
+	par2_put = "75";
+	par3_put = "45";
+
+	/*
+	//1.05
+	par1_put = "50";
+	par2_put = "75";
+	par3_put = "55";
+	*/
+      }
+
+      else if(version_put=="3"){
+	num_aerogel = "3";
+	par1_put = "16";
+	par2_put = "9";
+	par3_put = "65";
+      }
+
+      else if(version_put=="4"){
+	num_aerogel = "3";
+	par1_put = "36";
+	par2_put = "60";
+	par3_put = "40";
+      }
+
+      ui = new G4UIExecutive(1, argv);
     }
   
 
@@ -93,7 +132,7 @@ int main(int argc,char** argv)
   // Set mandatory initialization classes
   //
   // Detector construction
-  runManager->SetUserInitialization(new BACDetectorConstruction(num_aerogel,th1,th2,th3));
+  runManager->SetUserInitialization(new BACDetectorConstruction(version_put,num_aerogel,par1_put,par2_put,par3_put));
   
 
   // Physics list

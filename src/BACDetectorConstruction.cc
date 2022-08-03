@@ -2,6 +2,7 @@
 #include "AeroSD.hh"
 #include "MPPCSD.hh"
 
+
 #include "G4Colour.hh"
 #include "G4NistManager.hh"
 #include "G4Box.hh"
@@ -42,8 +43,8 @@ double f(G4double r, G4double z){
 }
 
 
-BACDetectorConstruction::BACDetectorConstruction(const G4String &num_aerogel, const G4String &th1,const G4String &th2,const G4String &th3)
-  : G4VUserDetectorConstruction(),num_aero(num_aerogel),theta1_put(th1), theta2_put(th2), theta3_put(th3)
+BACDetectorConstruction::BACDetectorConstruction(const G4String &version_put,const G4String &num_aerogel, const G4String &par1,const G4String &par2,const G4String &par3)
+  : G4VUserDetectorConstruction(),version_in(version_put), num_aero(num_aerogel),parameter1(par1), parameter2(par2), parameter3(par3)
 {
 }
 
@@ -58,24 +59,38 @@ BACDetectorConstruction::~BACDetectorConstruction()
 G4VPhysicalVolume* BACDetectorConstruction::Construct()
 {
 
-  /*
+  version=stoi(version_in);
   G4int num_aero_i = stoi(num_aero);
-  G4double reflect_part_length_d = stod(reflect_part_length);
-  G4double light_guide_length_d = stod(light_guide_length);
-  G4double middle_length_d = stod(middle_length);
-  */
 
-  G4int num_aero_i = stoi(num_aero);
-  G4double reflect_part_length_d = 140;
-  G4double light_guide_length_d = 50;
-  G4double middle_length_d = 20;
+  
+
+  if(version==1){
+    reflect_part_length_d = stod(parameter1);
+    light_guide_length_d = stod(parameter2);
+    middle_length_d = stod(parameter3);
+  }
   
   G4NistManager* nist = G4NistManager::Instance();
   G4bool checkOverlaps = true;
 
-  G4double theta1 = stod(theta1_put)*degree;
-  G4double theta2 = stod(theta2_put)*degree;
-  G4double theta3 = stod(theta3_put)*degree;
+  if(version==2){
+    theta1 = stod(parameter1)*degree;
+    theta2 = stod(parameter2)*degree;
+    theta3 = stod(parameter3)*degree;
+  }
+
+  if(version==3){
+    p = stod(parameter1);
+    ref_z = stod(parameter2);
+    ref_theta = stod(parameter3)*degree;
+  }
+
+  if(version==4){
+    p = stod(parameter1);
+    ref_theta = stod(parameter2)*degree;
+    mppc_theta = stod(parameter3)*degree;
+  }
+  
 
 
   //Material---------------------------------------------------------------
@@ -118,6 +133,12 @@ G4VPhysicalVolume* BACDetectorConstruction::Construct()
   Epoxi->AddElement(Cl, 1);
 
 
+  G4Material* Acrylic = new G4Material("Acrylic", 1.19*g/cm3, 3);
+  Acrylic->AddElement(C, 5);
+  Acrylic->AddElement(H, 8);
+  Acrylic->AddElement(O, 2);
+
+
 
   //Property--------------------------------------------------------------
 
@@ -139,8 +160,8 @@ G4VPhysicalVolume* BACDetectorConstruction::Construct()
   G4double aerogel_ep[] = {1.3*eV,7.*eV};
   //G4double aerogel_abs[] = {15*mm,15*mm};
   G4double aerogel_abs[] = {40*mm,40*mm};
-  G4double aerogel_rindex[]={1.10,1.10};
-  //G4double aerogel_rindex[]={1.04,1.04};
+  //G4double aerogel_rindex[]={1.10,1.10};
+  G4double aerogel_rindex[]={1.05,1.05};
   G4double aerogel_ray[] = {6.16*pow(10,10),6.16*pow(10,10)};
 
   assert(sizeof(aerogel_ep_abs)==sizeof(aerogel_abs));
@@ -225,6 +246,89 @@ G4VPhysicalVolume* BACDetectorConstruction::Construct()
   prop_epoxi->AddProperty("RINDEX",epoxi_ep,epoxi_rindex,2)->SetSpline(true);
   prop_epoxi->AddProperty("ABSLENGTH",epoxi_ep,epoxi_abs,2)->SetSpline(true);
   Epoxi->SetMaterialPropertiesTable(prop_epoxi);
+
+
+  //////////////////////////////////////////////////////////////////
+//               ACRYLIC Optical properties
+//////////////////////////////////////////////////////////////////
+
+// Refractive index
+
+  G4double lambda_min = 200*nm;
+  G4double lambda_max = 700*nm;
+
+  const G4int NENTRIES = 11 ;
+  G4double LAMBDA_ACRYLIC[NENTRIES] ;
+
+
+  G4double RINDEX_ACRYLIC[NENTRIES] ;
+  G4double ENERGY_ACRYLIC[NENTRIES] ;
+
+// Parameterization for refractive index of High Grade PMMA 
+
+  G4double bParam[4] = {1760.7010,-1.3687,2.4388e-3,-1.5178e-6} ; 
+  
+  for(G4int i=0;i<NENTRIES; i++){
+ 
+    LAMBDA_ACRYLIC[i] = lambda_min + i*(lambda_max-lambda_min)/float(NENTRIES-1) ;
+    RINDEX_ACRYLIC[i] = 0.0 ;
+
+    for (G4int jj=0 ; jj<4 ; jj++)
+    {
+      RINDEX_ACRYLIC[i] +=  (bParam[jj]/1000.0)*std::pow(LAMBDA_ACRYLIC[i]/nm,jj) ; 
+    }
+
+    ENERGY_ACRYLIC[i] =   CLHEP::h_Planck*CLHEP::c_light/LAMBDA_ACRYLIC[i] ;  // Convert from wavelength to energy ;
+//  G4cout << ENERGY_ACRYLIC[i]/eV << " " << LAMBDA_ACRYLIC[i]/nm << " " << RINDEX_ACRYLIC[i] << G4endl ;
+
+  }
+
+  G4MaterialPropertiesTable *MPT_Acrylic = new G4MaterialPropertiesTable();
+  MPT_Acrylic->AddProperty("RINDEX", ENERGY_ACRYLIC, RINDEX_ACRYLIC, NENTRIES);
+
+
+// Absorption
+  const G4int NENT = 25 ;
+  G4double LAMBDAABS[NENT] = 
+  {
+    100.0,
+    246.528671, 260.605103, 263.853516, 266.019104, 268.726105,    
+    271.433136, 273.598724, 276.305725, 279.554138, 300.127380,    
+    320.159241, 340.191101, 360.764343, 381.337585, 399.745239,    
+    421.401276, 440.891724, 460.382172, 480.414001, 500.987274,    
+    520.477722, 540.509583, 559.458618,
+    700.0    
+  } ;
+
+  G4double ABS[NENT] =   // Transmission (in %) of  3mm thick PMMA 
+  { 
+    0.0000000,
+    0.0000000,  5.295952,  9.657321, 19.937695, 29.283491, 
+    39.252335, 48.598133, 58.255451, 65.109039, 79.439247,
+    85.669785, 89.719627, 91.277260, 91.588783, 91.900307,
+    91.588783, 91.277260, 91.277260, 91.588783, 91.588783,
+    91.900307, 91.900307, 91.588783,
+    91.5
+  } ;
+
+
+  MPT_Acrylic->AddProperty("ABSLENGTH", new G4MaterialPropertyVector()) ;
+  for(G4int i=0;i<NENT; i++){
+    G4double energy    = CLHEP::h_Planck*CLHEP::c_light/(LAMBDAABS[i]*nm) ;
+    G4double abslength ;
+
+    if (ABS[i] <= 0.0) {
+      abslength = 1.0/kInfinity ;
+    }
+    else {
+      abslength = -3.0*mm/(G4Log(ABS[i]/100.0)) ;
+    }
+
+    MPT_Acrylic->AddEntry("ABSLENGTH", energy, abslength);
+
+  }
+
+  Acrylic->SetMaterialPropertiesTable(MPT_Acrylic);
   
 
   
@@ -234,7 +338,7 @@ G4VPhysicalVolume* BACDetectorConstruction::Construct()
   G4double world_size = 1*m;
   G4Box* solidWorld = new G4Box("World",world_size, world_size, world_size); 
   G4LogicalVolume* logicWorld = new G4LogicalVolume(solidWorld, world_mat, "World");
-  G4VPhysicalVolume* physWorld = new G4PVPlacement(0,G4ThreeVector(), logicWorld, "World",0,false,0,checkOverlaps);
+  physWorld = new G4PVPlacement(0,G4ThreeVector(), logicWorld, "World",0,false,0,checkOverlaps);
 
 
   if(version==1){
@@ -414,7 +518,7 @@ G4VPhysicalVolume* BACDetectorConstruction::Construct()
     
 
     //G4int numRZ = 30;
-    G4int numRZ = 40;
+    G4int numRZ = 100;
     G4double win_thick = 1*mm;
     G4double mppc_thick = 1*mm;
     G4double re_thick = 1*mm;
@@ -428,12 +532,15 @@ G4VPhysicalVolume* BACDetectorConstruction::Construct()
     new G4PVPlacement(0,G4ThreeVector(0*mm,0*mm,0*mm),AeroLW,"Aero",logicWorld,false,0,checkOverlaps);
 
     //Winston calculation
+    
     G4double r_in[numRZ];
     G4double z[numRZ];
     G4double r_out[numRZ];
+    
     for(int i=0;i<numRZ;i++){
       z[i] = i*mm;
     }
+    /*
     r_in[0] = r_enter;
     r_out[0] = r_in[0]+win_thick;
     for(int i=1;i<numRZ;i++){
@@ -444,6 +551,7 @@ G4VPhysicalVolume* BACDetectorConstruction::Construct()
       r_in[i] = x;
       r_out[i] = x+win_thick;
     }
+    */
 
 
     //Reflect
@@ -476,6 +584,9 @@ G4VPhysicalVolume* BACDetectorConstruction::Construct()
     poly[5].set(2*r_out[numRZ-1]*TMath::Cos(theta3),2*r_out[numRZ-1]*TMath::Sin(theta3)+Aeroy/2);
     poly[6].set(Aeroy/2*(1/TMath::Tan(theta1)+1/TMath::Tan(theta2)),Aeroy/2);
     poly[7].set(Aeroy/(2*TMath::Tan(theta1)),0);
+    for(int i=0;i<8;i++){
+      std::cout<<i<<" : "<<poly[i]<<std::endl;
+    }
 
 
     G4TwoVector offsetA(0.,0.), offsetB(0.,0.);
@@ -487,7 +598,7 @@ G4VPhysicalVolume* BACDetectorConstruction::Construct()
     new G4PVPlacement(rotY,G4ThreeVector(0,0,Aeroz_real/2),ReflectLW,"Reflect",logicWorld,false,0,checkOverlaps);
 
     //side reflector
-    G4Box* Side = new G4Box("Side",1*mm,15*cm,15*cm);
+    G4Box* Side = new G4Box("Side",1*mm,30*cm,30*cm);
     SideLW = new G4LogicalVolume(Side,Mylar,"Side");
     new G4PVPlacement(0,G4ThreeVector(-Aerox/2-1*mm,0,0),SideLW,"Side",logicWorld,false,0,checkOverlaps);
     new G4PVPlacement(0,G4ThreeVector(+Aerox/2+1*mm,0,0),SideLW,"Side",logicWorld,false,0,checkOverlaps);
@@ -614,11 +725,11 @@ G4VPhysicalVolume* BACDetectorConstruction::Construct()
     
 
     //G4int numRZ = 30;
-    G4int numRZ = 100;
+    G4int numRZ = 150;
     G4double win_thick = 1*mm;
     G4double mppc_thick = 1*mm;
     G4double re_thick = 1*mm;
-    G4double mppc_place = 30*mm;
+    G4double mppc_place = 70*mm;
 
 
 
@@ -634,7 +745,7 @@ G4VPhysicalVolume* BACDetectorConstruction::Construct()
     G4double x[numRZ];
     G4double y[numRZ];
     G4double x_out[numRZ];
-    G4double p = mppc_place/2;
+    //G4double p = mppc_place/3;
     for(int i=0;i<numRZ;i++){
       x[i] = i;
       x_out[i] = (i+1);
@@ -655,17 +766,22 @@ G4VPhysicalVolume* BACDetectorConstruction::Construct()
     ReflectLW = new G4LogicalVolume(Reflect,Mylar,"Reflect");
     G4RotationMatrix *rotY = new G4RotationMatrix();
     rotY->rotateY(+90*degree);
-    rotY->rotateZ(theta3);
+    rotY->rotateZ(ref_theta);
 
+    /*
     G4double pary = Aeroy/2+mppc_place/2*TMath::Sin(theta3)+0.5*cm;
     G4double parz = Aeroz_real/2+mppc_place*TMath::Cos(theta3)+3.5*cm;
+    */
+    G4double pary = Aeroy/2+mppc_place/2*TMath::Sin(theta3);
+    //G4double parz = Aeroz_real/2+mppc_place/2*TMath::Cos(theta3)+10*cm;
+    G4double parz = Aeroz_real/2+mppc_place/2*TMath::Cos(theta3)+ref_z*cm;
 
     new G4PVPlacement(rotY,G4ThreeVector(0,pary,parz),ReflectLW,"Reflect",logicWorld,false,0,checkOverlaps);
 
 
 
     //side reflector
-    G4Box* Side = new G4Box("Side",1*mm,15*cm,15*cm);
+    G4Box* Side = new G4Box("Side",1*mm,30*cm,30*cm);
     SideLW = new G4LogicalVolume(Side,Mylar,"Side");
     new G4PVPlacement(0,G4ThreeVector(-Aerox/2-1*mm,0,0),SideLW,"Side",logicWorld,false,0,checkOverlaps);
     new G4PVPlacement(0,G4ThreeVector(+Aerox/2+1*mm,0,0),SideLW,"Side",logicWorld,false,0,checkOverlaps);
@@ -675,27 +791,182 @@ G4VPhysicalVolume* BACDetectorConstruction::Construct()
     UpLW = new G4LogicalVolume(Up,Mylar,"Up");
     G4RotationMatrix *rotU = new G4RotationMatrix();
     rotU->rotateX(0*degree);
-    new G4PVPlacement(rotU,G4ThreeVector(0,pary-mppc_place/2*TMath::Sin(theta3),parz-0.5*mm),UpLW,"Up",logicWorld,false,0,checkOverlaps);
-     
+    //new G4PVPlacement(rotU,G4ThreeVector(0,pary-mppc_place/2*TMath::Sin(theta3),parz-0.5*mm),UpLW,"Up",logicWorld,false,0,checkOverlaps);
+
+
+    G4Box* Detect = new G4Box("Detect",60*mm,60*mm,5*cm);
+    DetectLW = new G4LogicalVolume(Detect, world_mat, "Detect");
+    //physDetect = new new G4PVPlacement(rotD,G4ThreeVector(Aerox_real/4,Aeroy/2+5*cm,Aeroz_real/2+3*cm), DetectLW, "Detect",logicWorld,false,0,checkOverlaps);
+    G4RotationMatrix *rotD = new G4RotationMatrix();
+    rotD->rotateX(90*degree);
+    physDetect = new G4PVPlacement(rotD,G4ThreeVector(0,Aeroy/2+5*cm,Aeroz_real/2+5*cm), DetectLW, "Detect",logicWorld,false,0,checkOverlaps);
+    //physDetect = new new G4PVPlacement(rotD,G4ThreeVector(Aerox_real/4,Aeroy/2+5*cm,Aeroz_real/2+3*cm), DetectLW, "Detect",logicWorld,false,0,checkOverlaps);
+    //new G4PVPlacement(rotD,G4ThreeVector(Aerox_real/4,Aeroy/2+5*cm,Aeroz_real/2+3*cm), DetectLW, "Detect",logicWorld,false,0,checkOverlaps);
+    //new G4PVPlacement(rotD,G4ThreeVector(-Aerox_real/4,Aeroy/2+5*cm,Aeroz_real/2+3*cm), DetectLW, "Detect",logicWorld,false,0,checkOverlaps);
+
+    
+    //lens
+
+    G4cout << "#                                                    #" << G4endl ;  
+    G4cout << "#           Building the Fresnel lens ...            #" << G4endl ;  
+    G4cout << "#                                                    #" << G4endl ;  
+
+    G4double      LensDiameter        = 120*mm ; // Size of the optical active area of the lens.
+    //G4int      LensNumOfGrooves    = 13 ;
+    G4int      LensNumOfGrooves    = 129 ;
+    //G4int      LensNumOfGrooves    = 1287 ;
+
+    G4double      LensBorderThickness = 1.5*mm ;     // Thickness of the border area. 
+    G4double      LensFocalLength     = 50*mm ; // This parameter depends on the lens geometry, etc !!
+    G4Material   *LensMaterial        = G4Material::GetMaterial("Acrylic") ;
+    G4ThreeVector LensPosition        = G4ThreeVector(0.0*mm,0.0*mm,-5*cm) ;
+
+
+    //Lens = new BACLens(LensDiameter,LensNumOfGrooves,LensMaterial,physDetect,LensPosition) ;
+    //Lens = new BACLens(LensDiameter,LensNumOfGrooves,LensMaterial,physWorld,LensPosition) ;
+
+
+    
+
+
+    
+    
     
       
 
    
     //MPPC---------------------------------------------------------------------------
     //G4Box* MPPC = new G4Box("MPPC",12*mm,12*mm,mppc_thick/2);
-    G4Box* MPPC = new G4Box("MPPC",3*mm,12*mm,mppc_thick/2);
+    //G4Box* MPPC = new G4Box("MPPC",3*mm,12*mm,mppc_thick/2);
+    G4Box* MPPC = new G4Box("MPPC",Aerox/2,60*mm,mppc_thick/2);
     MPPCLW = new G4LogicalVolume(MPPC,Epoxi,"MPPC");
     G4RotationMatrix *rotM = new G4RotationMatrix();
-    rotM->rotateX(90*degree+theta3);
+    //rotM->rotateX(90*degree+theta3);
+    rotM->rotateX(90*degree);
     /*
     for(int i=0;i<5;i++){
       new G4PVPlacement(rotM,G4ThreeVector((29*(i-2))*mm,Aeroy/2+mppc_place/2*TMath::Sin(theta3),Aeroz_real/2+mppc_place/2*TMath::Cos(theta3)),MPPCLW,"MPPC",logicWorld,false,i+1,checkOverlaps);
     }
     */
 
+    /*
     for(int i=0;i<11;i++){
       new G4PVPlacement(rotM,G4ThreeVector((12*(i-5))*mm,Aeroy/2+mppc_place/2*TMath::Sin(theta3),Aeroz_real/2+mppc_place/2*TMath::Cos(theta3)),MPPCLW,"MPPC",logicWorld,false,i+1,checkOverlaps);
     }
+    */
+
+    //new G4PVPlacement(rotM,G4ThreeVector(0,Aeroy/2+mppc_place/2*TMath::Sin(theta3),Aeroz_real/2+mppc_place/2*TMath::Cos(theta3)),MPPCLW,"MPPC",logicWorld,false,0,checkOverlaps);
+    new G4PVPlacement(rotM,G4ThreeVector(0,Aeroy/2,Aeroz_real/2+60*mm),MPPCLW,"MPPC",logicWorld,false,1,checkOverlaps);
+    //new G4PVPlacement(0,G4ThreeVector(0,0,5*cm-mppc_thick/2),MPPCLW,"MPPC",DetectLW,false,0,checkOverlaps);
+
+  }
+
+
+
+
+
+    
+    if(version==4){
+
+    //size
+    G4double Aerox_real = 125.0 *mm;
+    G4double Aeroy_real = 125.0 *mm;
+    G4double Aeroz_real = 12.0 *mm*num_aero_i;
+
+    G4double extrax = 20*mm;
+    G4double extray = 10*mm;
+    G4double Aerox = 125.0 *mm+extrax;
+    G4double Aeroy = 125.0 *mm+extray;
+
+    
+
+    //G4int numRZ = 30;
+    G4int numRZ = 150;
+    G4double win_thick = 1*mm;
+    G4double mppc_thick = 1*mm;
+    G4double re_thick = 1*mm;
+    G4double mppc_place = 30*mm;
+
+
+
+
+    //Aerogel 
+    G4Box* Aero = new G4Box("Aero",Aerox_real/2,Aeroy_real/2,Aeroz_real/2);
+    AeroLW = new G4LogicalVolume(Aero,Aerogel,"Aero");
+    new G4PVPlacement(0,G4ThreeVector(0*mm,0*mm,0*mm),AeroLW,"Aero",logicWorld,false,0,checkOverlaps);
+
+
+
+    //Parabola
+    G4double x[numRZ];
+    G4double y[numRZ];
+    G4double x_out[numRZ];
+    //G4double p = mppc_place/2;
+    for(int i=0;i<numRZ;i++){
+      x[i] = i;
+      x_out[i] = (i+1);
+      y[i] = x[i]*x[i]/(4*p);
+      
+    }
+
+    std::vector<G4TwoVector> poly(2*numRZ);
+    for(int i=0;i<numRZ;i++){
+      poly[i].set(x[i]*mm,-y[i]*mm);
+      poly[2*numRZ-1-i].set(x_out[i]*mm,-y[i]*mm);
+    }
+
+    
+    G4TwoVector offsetA(0.,0.), offsetB(0.,0.);
+    G4double scaleA=1., scaleB=1.;
+    G4ExtrudedSolid* Reflect = new G4ExtrudedSolid("Reflect",poly,Aerox/2,offsetA,scaleA, offsetB, scaleB);
+    ReflectLW = new G4LogicalVolume(Reflect,Mylar,"Reflect");
+    G4RotationMatrix *rotY = new G4RotationMatrix();
+    rotY->rotateY(+90*degree);
+    rotY->rotateZ(ref_theta);
+
+    G4double pary = Aeroy/2+mppc_place/2*TMath::Sin(theta3)+5*cm;
+    G4double parz = Aeroz_real/2+mppc_place*TMath::Cos(theta3)+5*cm;
+
+    new G4PVPlacement(rotY,G4ThreeVector(0,pary,parz),ReflectLW,"Reflect",logicWorld,false,0,checkOverlaps);
+
+
+
+    //side reflector
+    G4Box* Side = new G4Box("Side",1*mm,30*cm,30*cm);
+    SideLW = new G4LogicalVolume(Side,Mylar,"Side");
+    new G4PVPlacement(0,G4ThreeVector(-Aerox/2-1*mm,0,0),SideLW,"Side",logicWorld,false,0,checkOverlaps);
+    new G4PVPlacement(0,G4ThreeVector(+Aerox/2+1*mm,0,0),SideLW,"Side",logicWorld,false,0,checkOverlaps);
+
+    //for efficiency of upper part
+    G4Box* Up = new G4Box("Up",Aerox/2,15*mm,1*mm);
+    UpLW = new G4LogicalVolume(Up,Mylar,"Up");
+    G4RotationMatrix *rotU = new G4RotationMatrix();
+    rotU->rotateX(0*degree);
+    //new G4PVPlacement(rotU,G4ThreeVector(0,pary-mppc_place/2*TMath::Sin(ref_theta),parz-0.5*mm),UpLW,"Up",logicWorld,false,0,checkOverlaps);
+     
+    
+      
+
+   
+    //MPPC---------------------------------------------------------------------------
+    G4Box* MPPC = new G4Box("MPPC",12*mm,12*mm,mppc_thick/2);
+    //G4Box* MPPC = new G4Box("MPPC",3*mm,12*mm,mppc_thick/2);
+    MPPCLW = new G4LogicalVolume(MPPC,Epoxi,"MPPC");
+    G4RotationMatrix *rotM = new G4RotationMatrix();
+    rotM->rotateX(90*degree+mppc_theta);
+    /*
+    for(int i=0;i<5;i++){
+      new G4PVPlacement(rotM,G4ThreeVector((29*(i-2))*mm,Aeroy/2+mppc_place*1.5*TMath::Sin(mppc_theta),Aeroz_real/2+mppc_place*1.5*TMath::Cos(mppc_theta)),MPPCLW,"MPPC",logicWorld,false,i+1,checkOverlaps);
+    }
+    */
+
+
+
+
+    for(int i=0;i<11;i++){
+      new G4PVPlacement(rotM,G4ThreeVector((12*(i-5))*mm,Aeroy/2+mppc_place/2*TMath::Sin(theta3),Aeroz_real/2+mppc_place/2*TMath::Cos(theta3)),MPPCLW,"MPPC",logicWorld,false,i+1,checkOverlaps);
+    }
+
 
   }
 
@@ -715,7 +986,7 @@ G4VPhysicalVolume* BACDetectorConstruction::Construct()
   auto visAttributes = new G4VisAttributes(G4Colour(1.0, 1.0, 1.0));
   visAttributes -> SetVisibility(false);
   logicWorld->SetVisAttributes(visAttributes);
-  if(version==2)DetectLW->SetVisAttributes(visAttributes);
+  if(version==2||version==3)DetectLW->SetVisAttributes(visAttributes);
   fVisAttributes.push_back(visAttributes);
 
   
@@ -842,9 +1113,12 @@ void BACDetectorConstruction::ConstructSDandField()
   AeroLW->SetSensitiveDetector(aeroSD);
 
 
+  
   auto mppcSD = new MPPCSD("mppcSD");
   G4SDManager::GetSDMpointer()->AddNewDetector(mppcSD);
   MPPCLW->SetSensitiveDetector(mppcSD);
+
+
 
 
 }

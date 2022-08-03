@@ -11,10 +11,11 @@ class G4VSensitiveDetector;
 class G4PVPlacement;
 class G4VisAttributes;
 
+
 class BACDetectorConstruction : public G4VUserDetectorConstruction
 {
 public:
-  BACDetectorConstruction(const G4String &num_aerogel, const G4String &th1, const G4String &th2, const G4String &th3);
+  BACDetectorConstruction(const G4String &version_put, const G4String &num_aerogel, const G4String &parameter1, const G4String &parameter2, const G4String &parameter3);
   virtual ~BACDetectorConstruction();
 
   virtual void ConstructSDandField();
@@ -22,6 +23,26 @@ public:
   virtual G4VPhysicalVolume* Construct();
 
 private:
+
+  G4double reflect_part_length_d;
+  G4double light_guide_length_d;
+  G4double middle_length_d;
+
+  G4double theta1;
+  G4double theta2;
+  G4double theta3;
+
+  G4double p;
+  G4double ref_z;
+  G4double ref_theta;
+
+  G4double mppc_theta;
+
+  
+
+  
+  G4VPhysicalVolume* physWorld;
+  G4VPhysicalVolume* physDetect;
   G4LogicalVolume* AeroLW;
   G4LogicalVolume* BlackLW;
   G4LogicalVolume* trdworldLW;
@@ -45,12 +66,17 @@ private:
 
   std::vector<G4VisAttributes*> fVisAttributes;
 
-  const int version = 3;
+  G4int version;
+  //const int version = stoi(version_put);
 
+  //G4String version_put;
+  G4String version_in;
   G4String num_aero;
-  G4String theta1_put;
-  G4String theta2_put;
-  G4String theta3_put;
+  G4String parameter1;
+  G4String parameter2;
+  G4String parameter3;
+  
+  //BACLens *Lens;
 
 
   

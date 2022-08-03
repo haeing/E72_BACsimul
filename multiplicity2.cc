@@ -2,7 +2,7 @@ void multiplicity2(){
 
   gStyle->SetOptStat(0);
 
-  TFile *file =  new TFile("build/version3_ae40.root","read");
+  TFile *file =  new TFile("build/v4_36_60_40_mu_105.root","read");
   TTree* data = (TTree*)file->Get("tree");
 
   Int_t nhMppc;
@@ -32,7 +32,7 @@ void multiplicity2(){
   */
   Int_t numx = 1;
   Int_t numy = 1;
-  Int_t numz = 5;
+  Int_t numz = 11;
   Int_t multi[numx][numy][numz];
   Int_t cell_num[numx][numy][numz];
 
@@ -112,9 +112,9 @@ void multiplicity2(){
 
   
     
-  if(multi_thre>2)evt->Fill(evtposx,evtposy);
+  if(multi_thre>0)evt->Fill(evtposx,evtposy);
   for(int f=0;f<num_check;f++){
-    if(multi_effi[f]>2)effi_thre[f]++;
+    if(multi_effi[f]>0)effi_thre[f]++;
   }
   multi_thre=0;
   }
