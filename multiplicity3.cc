@@ -5,8 +5,8 @@ void multiplicity3(){
   int N = 3;
   TFile *file[N];
   file[0] =  new TFile("build/v1_110.root","read");
-  file[1] =  new TFile("build/v2_110.root","read");
-  file[2] =  new TFile("build/v4_110.root","read");
+  file[1] =  new TFile("build/v2_110_mppc4_29.root","read");
+  file[2] =  new TFile("build/v4_110_mppc4_35.root","read");
   TTree *data[N];
   for(int i=0;i<N;i++){
     data[i] = (TTree*)file[i]->Get("tree");
@@ -36,18 +36,18 @@ void multiplicity3(){
 
   //Condition
   
-  Int_t numx = 1;
-  Int_t numy = 1;
-  Int_t numz = 5;
+  Int_t numx = 4;
+  Int_t numy = 4;
+  Int_t numz = 4;
 
 
   Double_t onex = 24/numx;
   Double_t oney = 24/numy;
-  Int_t thre = 10;
+  //Int_t thre = 10;
 
   Int_t mul_th = 1;
 
-  Int_t num_check=10;
+  Int_t num_check=20;
   
 
   //Parameters
@@ -143,7 +143,7 @@ void multiplicity3(){
       }
       for(int f=0;f<num_check;f++){
 	if(multi_effi[v][f]>mul_th)effi_thre[v][f]++;
-	if(multi_effi[v][f]<=mul_th)evt[v][f]->Fill(evtposx[v],evtposy[v]);
+	if(multi_effi[v][f]>mul_th)evt[v][f]->Fill(evtposx[v],evtposy[v]);
       }
 
 

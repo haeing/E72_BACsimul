@@ -112,7 +112,7 @@ int main(int argc,char** argv)
 
       else if(version_put=="4"){
 	num_aerogel = "3";
-	par1_put = "36";
+	par1_put = "4";
 	par2_put = "60";
 	par3_put = "40";
       }

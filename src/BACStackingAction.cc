@@ -77,8 +77,8 @@ BACStackingAction::ClassifyNewTrack(const G4Track * aTrack)
 
 void BACStackingAction::NewStage()
 {
-  std::cout << "Number of Scintillation photons produced in this event : "
-	    << fScintillationCounter << std::endl;
+  //std::cout << "Number of Scintillation photons produced in this event : "
+  //	    << fScintillationCounter << std::endl;
   std::cout << "Number of Cerenkov photons produced in this event : "
 	    << fCerenkovCounter << std::endl;
 

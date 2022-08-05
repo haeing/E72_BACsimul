@@ -37,6 +37,7 @@ private:
   G4double ref_theta;
 
   G4double mppc_theta;
+  G4double Dpartz;
 
   
 
@@ -64,6 +65,7 @@ private:
   G4LogicalVolume* ReflectBLW;
   G4LogicalVolume* DetectLW;
   G4LogicalVolume* SideLW;
+
 
 
   std::vector<G4VisAttributes*> fVisAttributes;
