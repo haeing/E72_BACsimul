@@ -53,6 +53,8 @@ private:
   G4LogicalVolume* WinstonLW;
   G4LogicalVolume* CCPCLW;
   G4LogicalVolume* UpLW;
+  G4LogicalVolume* BottomLW;
+  G4LogicalVolume* DetLW;
 
 
   G4LogicalVolume* Part1LW;

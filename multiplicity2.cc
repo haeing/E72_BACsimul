@@ -2,7 +2,7 @@ void multiplicity2(){
 
   gStyle->SetOptStat(0);
 
-  TFile *file =  new TFile("build/v4_110_withqe.root","read");
+  TFile *file =  new TFile("build/v4_110_tight.root","read");
   TTree* data = (TTree*)file->Get("tree");
 
   Int_t nhMppc;
@@ -30,22 +30,22 @@ void multiplicity2(){
   Int_t numy = 4;
   Int_t numz = 5;
   */
-  Int_t numx = 2;
-  Int_t numy = 2;
+  Int_t numx = 1;
+  Int_t numy = 1;
   Int_t numz = 5;
   Int_t multi[numx][numy][numz];
   Int_t cell_num[numx][numy][numz];
 
   Double_t onex = 24/numx;
   Double_t oney = 24/numy;
-  Int_t thre = 5;
+  Int_t thre = 10;
   Int_t result;
   Double_t effi_num[5];
 
   Int_t num_check=20;
   Int_t multi_effi[num_check];
   Int_t effi_thre[num_check];
-  Int_t mul_th = 0;
+  Int_t mul_th = 1;
   for(int i=0;i<num_check;i++){
     multi_effi[i]=0;
     effi_thre[i]=0;
@@ -82,6 +82,7 @@ void multiplicity2(){
       for(int ny=0;ny<numy;ny++){
 	for(int nz=0;nz<numz;nz++){
 	  if(-12+onex*nx<=x[i]&&-12+onex*(nx+1)>x[i]&&-12+oney*ny<=y[i]&&-12+oney*(ny+1)>y[i]&&nz+1<=copynum[i]&&nz+2>copynum[i]){
+	    //if(-1.5+onex*nx<=x[i]&&-1.5+onex*(nx+1)>x[i]&&-1.5+oney*ny<=y[i]&&-1.5+oney*(ny+1)>y[i]&&nz*16+1<=copynum[i]&&(nz+1)*16+1>copynum[i]){
 	      multi[nx][ny][nz]=1;
 	      cell_num[nx][ny][nz]++;
 	  }

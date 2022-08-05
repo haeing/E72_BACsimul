@@ -162,14 +162,14 @@ G4VPhysicalVolume* BACDetectorConstruction::Construct()
   //G4double aerogel_abs[] = {40*mm,40*mm};
   G4double aerogel_rindex[]={1.10,1.10};
   //G4double aerogel_rindex[]={1.05,1.05};
-  G4double aerogel_ray[] = {6.16*pow(10,10),6.16*pow(10,10)};
+  //G4double aerogel_ray[] = {6.16*pow(10,10),6.16*pow(10,10)};
 
   assert(sizeof(aerogel_ep_abs)==sizeof(aerogel_abs));
   //const G4int num_aerogel = sizeof(aerogel_ep_abs)/sizeof(G4double);
   
   prop_aerogel->AddProperty("RINDEX",aerogel_ep,aerogel_rindex,2)->SetSpline(true);
   prop_aerogel->AddProperty("ABSLENGTH",aerogel_ep,aerogel_abs,2)->SetSpline(true);
-  prop_aerogel->AddProperty("RAYLEIGH",aerogel_ep,aerogel_ray,2)->SetSpline(true);
+  //prop_aerogel->AddProperty("RAYLEIGH",aerogel_ep,aerogel_ray,2)->SetSpline(true);
   //prop_aerogel->AddProperty("FASTCOMPONENT",scin_ep1,scin_fast,numentries_scin1)->SetSpline(true);
   //prop_aerogel->AddProperty("SLOWCOMPONENT",scin_ep1,scin_fast,numentries_scin1)->SetSpline(true);
   //prop_aerogel->AddConstProperty("SCINTILLATIONYIELD",10000./MeV);
@@ -895,6 +895,11 @@ G4VPhysicalVolume* BACDetectorConstruction::Construct()
     AeroLW = new G4LogicalVolume(Aero,Aerogel,"Aero");
     new G4PVPlacement(0,G4ThreeVector(0*mm,0*mm,0*mm),AeroLW,"Aero",logicWorld,false,0,checkOverlaps);
 
+    G4Box *bottom = new G4Box("Bottom",Aerox/2,1*mm,Aeroz_real/2);
+    BottomLW = new G4LogicalVolume(bottom,Mylar,"Bottom");
+    new G4PVPlacement(0,G4ThreeVector(0,-Aeroy/2,0),BottomLW,"Bottom",logicWorld,false,0,checkOverlaps);
+    new G4PVPlacement(0,G4ThreeVector(0,Aeroy/2,0),BottomLW,"Bottom",logicWorld,false,0,checkOverlaps);
+
 
 
     //Parabola
@@ -929,6 +934,8 @@ G4VPhysicalVolume* BACDetectorConstruction::Construct()
 
     new G4PVPlacement(rotY,G4ThreeVector(0,pary,parz),ReflectLW,"Reflect",logicWorld,false,0,checkOverlaps);
 
+    
+
 
 
     //side reflector
@@ -943,6 +950,7 @@ G4VPhysicalVolume* BACDetectorConstruction::Construct()
     G4RotationMatrix *rotU = new G4RotationMatrix();
     rotU->rotateX(0*degree);
     //new G4PVPlacement(rotU,G4ThreeVector(0,pary-mppc_place/2*TMath::Sin(ref_theta),parz-0.5*mm),UpLW,"Up",logicWorld,false,0,checkOverlaps);
+    
      
     
       
@@ -950,14 +958,30 @@ G4VPhysicalVolume* BACDetectorConstruction::Construct()
    
     //MPPC---------------------------------------------------------------------------
     G4Box* MPPC = new G4Box("MPPC",12*mm,12*mm,mppc_thick/2);
-    //G4Box* MPPC = new G4Box("MPPC",3*mm,12*mm,mppc_thick/2);
+    //G4Box* MPPC = new G4Box("MPPC",1.5*mm,1.5*mm,mppc_thick/2);
     MPPCLW = new G4LogicalVolume(MPPC,Epoxi,"MPPC");
     G4RotationMatrix *rotM = new G4RotationMatrix();
     rotM->rotateX(90*degree+mppc_theta);
 
+    
     for(int i=0;i<5;i++){
       new G4PVPlacement(rotM,G4ThreeVector((29*(i-2))*mm,Aeroy/2+mppc_place*1.5*TMath::Sin(mppc_theta),Aeroz_real/2+mppc_place*1.5*TMath::Cos(mppc_theta)),MPPCLW,"MPPC",logicWorld,false,i+1,checkOverlaps);
     }
+
+    /*
+    G4Box* Det = new G4Box("Det",Aerox/2,12*mm,mppc_thick/2);
+    DetLW = new G4LogicalVolume(Det,world_mat,"Det");
+    new G4PVPlacement(rotM,G4ThreeVector(0,Aeroy/2+mppc_place*1.5*TMath::Sin(mppc_theta),Aeroz_real/2+mppc_place*1.5*TMath::Cos(mppc_theta)), DetLW, "Det",logicWorld,false,0,checkOverlaps);
+    
+    
+    for(int i=0;i<5;i++){
+      for(int j=0;j<4;j++){
+	for(int k=0;k<4;k++){
+	  new G4PVPlacement(0,G4ThreeVector(((29*(i-2))-9+6*j)*mm,(-9+6*k)*mm,0),MPPCLW,"MPPC",DetLW,false,i*16+j*4+k+1,checkOverlaps);
+	}
+      }
+    }
+    */
 
 
 
@@ -1027,6 +1051,10 @@ G4VPhysicalVolume* BACDetectorConstruction::Construct()
 
   //new G4LogicalSkinSurface("bs_surface",BlackLW,surface_bs);
 
+  
+  
+  
+
   //mylar_al surface-------------------
   G4OpticalSurface* surface_mylar = new G4OpticalSurface("surface_mylar");
   surface_mylar->SetType(dielectric_metal);
@@ -1056,6 +1084,7 @@ G4VPhysicalVolume* BACDetectorConstruction::Construct()
   new G4LogicalSkinSurface("mylar_surface",CCPCLW,surface_mylar);
   new G4LogicalSkinSurface("mylar_surface",SideLW,surface_mylar);
   new G4LogicalSkinSurface("mylar_surface",UpLW,surface_mylar);
+  new G4LogicalSkinSurface("mylar_surface",BottomLW,surface_mylar);
 
 
 
